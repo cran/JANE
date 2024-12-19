@@ -9,3 +9,14 @@
 ## 0.1.1
 * Fix plotting scripts to include immediate call to on.exit to reset user settings
 * Add testthat functionality for automatic testing of package functions
+
+## 0.1.2
+* Add import Rcpp and future to NAMESPACE
+
+## 0.2.0
+* Improve plotting function:
+  * Add options for user-specified titles (i.e., main, xlab, and ylab)
+  * Add option for user-specified colors for clusters 
+  
+## 0.2.1
+* summary.JANE now returns actor-specific uncertainty  

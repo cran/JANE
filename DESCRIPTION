@@ -1,6 +1,6 @@
 Package: JANE
 Title: Just Another Latent Space Network Clustering Algorithm
-Version: 0.1.1
+Version: 0.2.1
 Authors@R: 
     c(person("Alan", "Arakkal", , "alan-arakkal@uiowa.edu", 
              role = c("aut", "cre", "cph"),
@@ -26,9 +26,9 @@ BugReports: https://github.com/a1arakkal/JANE/issues
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2024-11-13 16:59:35 UTC; alanarakkal
+Packaged: 2024-12-19 16:41:08 UTC; alanarakkal
 Author: Alan Arakkal [aut, cre, cph] (<https://orcid.org/0000-0002-7001-493X>),
   Daniel Sewell [aut] (<https://orcid.org/0000-0002-9238-4026>)
 Maintainer: Alan Arakkal <alan-arakkal@uiowa.edu>
 Repository: CRAN
-Date/Publication: 2024-11-14 13:40:03 UTC
+Date/Publication: 2024-12-19 17:00:06 UTC
