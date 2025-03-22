@@ -1,8 +1,16 @@
 #' Fit JANE
-#' @description Fit the latent space cluster model using an EM algorithm.
-#' @param A A square matrix or sparse matrix of class 'dgCMatrix' representing the adjacency matrix of the \strong{unweighted} network of interest.
+#' @description Fit a latent space cluster model, with or without noise edges, using an EM algorithm.
+#' @param A A square matrix or sparse matrix of class 'dgCMatrix' representing the adjacency matrix of the network of interest.
 #' @param D Integer (scalar or vector) specifying the dimension of the latent space (default is 2).
 #' @param K Integer (scalar or vector) specifying the number of clusters to consider (default is 2).
+#' @param family A character string specifying the distribution of the edge weights.
+#'  \itemize{
+#'   \item{'bernoulli': Expects an \strong{unweighted} network; utilizes a Bernoulli distribution with a logit link (default)}
+#'   \item{'lognormal': Expects a \strong{weighted} network with positive, non-zero, continuous edge weights; utilizes a log-normal distribution with an identity link}
+#'   \item{'poisson': Expects a \strong{weighted} network with edge weights representing non-zero counts; utilizes a zero-truncated Poisson distribution with a log link}
+#'   }
+#' @param noise_weights A logical; if \code{TRUE} then a Hurdle model is used to account for noise weights, if \code{FALSE} simply utilizes the supplied network (converted to an unweighted binary network if a weighted network is supplied, i.e., (A > 0.0)*1.0) and fits a latent space cluster model (default is \code{FALSE}). 
+#' @param guess_noise_weights Only applicable if \code{noise_weights = TRUE}. A numeric value specifying the best guess for the mean of the noise weight distribution for \code{family \%in\% c('lognormal', 'poisson')} (mean is on the log-scale for lognormal) \strong{OR} proportion (i.e. in (0,1)) of all edges that are noise edges for \code{family = 'bernoulli'}. If \code{NULL} (i.e., default) and \code{noise_weights = TRUE} then the 1st percentile of the non-zero weights will be used for \code{family \%in\% c('lognormal', 'poisson')} and 1% will be used for \code{family = 'bernoulli'}.
 #' @param model A character string specifying the model to fit:
 #'  \itemize{
 #'   \item{'NDH': \strong{undirected} network with no degree heterogeneity}
@@ -16,25 +24,25 @@
 #'   \item{A user supplied list of initial values. See \code{\link[JANE]{specify_initial_values}} on how to specify initial values}
 #'   }
 #' @param case_control A logical; if \code{TRUE} then uses a case-control approximation approach (default is \code{FALSE}).
-#' @param DA_type A character string to specify the type of deterministic annealing approach to use
+#' @param DA_type (Experimental) A character string to specify the type of deterministic annealing approach to use
 #'  \itemize{
 #'   \item{'none': does not employ a deterministic annealing approach (default)}
-#'   \item{'cooling': employes a traditional deterministic annealing approach where temperature decreases}
-#'   \item{'heating': employes a deterministic anti-annealing approach where temperature increases}
-#'   \item{'hybrid': employes a combination of the 'cooling' and 'heating' approach}
+#'   \item{'cooling': (Experimental) employes a traditional deterministic annealing approach where temperature decreases}
+#'   \item{'heating': (Experimental) employes a deterministic anti-annealing approach where temperature increases}
+#'   \item{'hybrid': (Experimental) employes a combination of the 'cooling' and 'heating' approach}
 #'   }
 #' @param seed (optional) An integer value to specify the seed for reproducibility.
 #' @param control A list of control parameters. See 'Details'.
 #' @return A list of S3 \code{\link{class}} "\code{JANE}" containing the following components:
-#' \item{\code{input_params}}{ A list containing the input parameters for \code{IC_selection}, \code{case_control}, and \code{DA_type} used in the function call.}
+#' \item{\code{input_params}}{ A list containing the input parameters for \code{IC_selection}, \code{case_control}, \code{DA_type}, \code{model}, \code{family}, and \code{noise_weights} used in the function call.}
 #' \item{\code{A}}{ The square sparse adjacency matrix of class 'dgCMatrix' used in fitting the latent space cluster model. This matrix can be different than the input A matrix as isolates are removed.}
-#' \item{\code{IC_out}}{ A matrix containing the relevant information criteria for all combinations of \code{K}, \code{D}, and \code{n_start} considered. The 'selected' column indicates the optimal fit chosen.}
+#' \item{\code{IC_out}}{ A matrix containing the relevant information criteria for all combinations of \code{K}, \code{D}, and \code{n_start} considered. The 'selected' column indicates the chosen optimal fit.}
 #' \item{\code{all_convergence_ind}}{ A matrix containing the convergence information (i.e., 1 = converged, 0 = did not converge) and number of iterations for all combinations of \code{K}, \code{D}, \code{n_start}, and \code{beta_temperature} considered.} 
 #' \item{\code{optimal_res}}{ A list containing the estimated parameters of interest based on the optimal fit selected. It is recommended to use \code{summary()} to extract the parameters of interest. See \code{\link[JANE]{summary.JANE}} for more details.}
 #' \item{\code{optimal_starting}}{ A list containing the starting parameters used in the EM algorithm that resulted in the optimal fit selected. It is recommended to use \code{summary()} to extract the parameters of interest. See \code{\link[JANE]{summary.JANE}} for more details.}
 #' @details
 #' 
-#' If an unsymmetric adjacency matrix A is supplied for \code{model %in% c('NDH', 'RS')} the user will be asked if they would like to proceed with converting A to a symmetric matrix (i.e., \code{A <- 1.0 * ( (A + t(A)) > 0.0 )}).
+#' Isolates are removed from the adjacency matrix A. If an unsymmetric adjacency matrix A is supplied for \code{model %in% c('NDH', 'RS')} the user will be asked if they would like to proceed with converting A to a symmetric matrix (i.e., \code{A <- 1.0 * ( (A + t(A)) > 0.0 )}). Additionally, if a weighted network is supplied and \code{noise_weights = FALSE}, then the network will be converted to an unweighted binary network (i.e., (A > 0.0)*1.0) and a latent space cluster model is fit.
 #'  
 #' \strong{\code{control}:}
 #' 
@@ -46,7 +54,7 @@
 #' \item{\code{priors}}{A list of prior hyperparameters (default is \code{NULL}). See \code{\link[JANE]{specify_priors}} on how to specify the hyperparameters.}
 #' \item{\code{n_interior_knots}}{(only relevant for \code{model \%in\% c('RS', 'RSR')}) An integer specifying the number of interior knots used in fitting a natural cubic spline for degree heterogeneity models (default is \code{5}).}
 #' \item{\code{termination_rule}}{A character string to specify the termination rule to determine the convergence of the EM algorithm: \itemize{
-#'                                 \item{\code{'prob_mat'}: uses change in the absolute difference in \eqn{\hat{Z}} (i.e., the \eqn{N \times K} cluster membership probability matrix) between subsequent iterations (default)}
+#'                                 \item{\code{'prob_mat'}: uses change in the absolute difference in \eqn{\hat{Z}^{U}} (i.e., the \eqn{N \times K} cluster membership probability matrix) between subsequent iterations (default)}
 #'                                 \item{\code{'Q'}: uses change in the absolute difference in the objective function of the E-step evaluated using parameters from subsequent iterations}
 #'                                 \item{\code{'ARI'}: comparing the classifications between subsequent iterations using adjusted Rand index}
 #'                                 \item{\code{'NMI'}: comparing the classifications between subsequent iterations using normalized mutual information}
@@ -56,20 +64,20 @@
 #' \item{\code{tolerance_ARI}}{A numeric specifying the tolerance used for \code{termination_rule = 'ARI'} (default is \code{0.999}).}    
 #' \item{\code{tolerance_NMI}}{A numeric specifying the tolerance used for \code{termination_rule = 'NMI'} (default is \code{0.999}).}    
 #' \item{\code{tolerance_CER}}{A numeric specifying the tolerance used for \code{termination_rule = 'CER'} (default is \code{0.01}).}    
-#' \item{\code{n_its_start_CA}}{An integer specifying what iteration to start computing cumulative averages (note: cumulative average of \eqn{U}, the latent position matrix, is not tracked when \code{termination_rule = 'Q'}) (default is \code{20}).}
-#' \item{\code{tolerance_diff_CA}}{A numeric specifying the tolerance used for the change in cumulative average of \code{termination_rule} metric and \eqn{U} (note: cumulative average of \eqn{U} is not tracked when \code{termination_rule = 'Q'}) (default is \code{1e-3}).}
-#' \item{\code{consecutive_diff_CA}}{An integer specifying the tolerance for the number of consecutive instances where change in cumulative average is less than \code{tolerance_diff_CA} (default is \code{5}).}    
-#' \item{\code{quantile_diff}}{A numeric in \code{[0,1]} specifying the quantile used in computing the change in the absolute difference of \eqn{Z} and \eqn{U} between subsequent iterations (default is \code{1}, i.e., max).}
-#' \item{\code{beta_temp_schedule}}{A numeric vector specifying the temperature schedule for deterministic annealing (default is \code{1}, i.e., deterministic annealing not utilized).}       
+#' \item{\code{n_its_start_CA}}{An integer specifying what iteration to start computing the change in cumulative averages (note: the change in the cumulative average of \eqn{\hat{U}}, the latent position matrix, is not tracked when \code{termination_rule = 'Q'}) (default is \code{20}).}
+#' \item{\code{tolerance_diff_CA}}{A numeric specifying the tolerance used for the change in cumulative average of \code{termination_rule} metric and \eqn{\hat{U}} (note: the change in the cumulative average of \eqn{\hat{U}} is not tracked when \code{termination_rule = 'Q'}) (default is \code{1e-3}).}
+#' \item{\code{consecutive_diff_CA}}{An integer specifying the tolerance for the number of consecutive instances where the change in cumulative average is less than \code{tolerance_diff_CA} (default is \code{5}).}    
+#' \item{\code{quantile_diff}}{A numeric in \code{[0,1]} specifying the quantile used in computing the change in the absolute difference of \eqn{\hat{Z}^{U}} and \eqn{\hat{U}} between subsequent iterations (default is \code{1}, i.e., max).}
+#' \item{\code{beta_temp_schedule}}{(Experimental) A numeric vector specifying the temperature schedule for deterministic annealing (default is \code{1}, i.e., deterministic annealing not utilized).}       
 #' \item{\code{n_control}}{An integer specifying the fixed number of controls (i.e., non-links) sampled for each actor; only relevant when \code{case_control = TRUE} (default is \code{100} when \code{case_control = TRUE} and \code{NULL} when \code{case_control = FALSE}).}  
 #' \item{\code{n_start}}{An integer specifying the maximum number of starts for the EM algorithm (default is \code{5}).}    
 #' \item{\code{max_retry}}{An integer specifying the maximum number of re-attempts if starting values cause issues with EM algorithm (default is \code{5}).}    
 #' \item{\code{IC_selection}}{A character string to specify the information criteria used to select the optimal fit based on the combinations of \code{K}, \code{D}, and \code{n_start} considered: \itemize{
-#'                                 \item{\code{'BIC_logit'}: BIC computed from logistic regression component}
+#'                                 \item{\code{'BIC_model'}: BIC computed from logistic regression or Hurdle model component}
 #'                                 \item{\code{'BIC_mbc'}: BIC computed from model based clustering component}
 #'                                 \item{\code{'ICL_mbc'}: ICL computed from model based clustering component}
-#'                                 \item{\code{'Total_BIC'}: sum of \code{'BIC_logit'} and \code{'BIC_mbc'}}
-#'                                 \item{\code{'Total_ICL'}: sum of \code{'BIC_logit'} and \code{'ICL_mbc'} (default)}
+#'                                 \item{\code{'Total_BIC'}: sum of \code{'BIC_model'} and \code{'BIC_mbc'}}
+#'                                 \item{\code{'Total_ICL'}: sum of \code{'BIC_model'} and \code{'ICL_mbc'} (default)}
 #'                                 }}
 #' \item{\code{sd_random_U_GNN}}{(only relevant when \code{initialization = 'GNN'}) A positive numeric value specifying the standard deviation for the random draws from a normal distribution to initialize \eqn{U} (default is \code{1}).} 
 #' \item{\code{max_retry_GNN}}{(only relevant when \code{initialization = 'GNN'}) An integer specifying the maximum number of re-attempts for the \code{GNN} approach before switching to random starting values (default is \code{10}).} 
@@ -83,13 +91,13 @@
 #' 
 #' \strong{Choosing the number of clusters:}
 #' 
-#' \code{JANE} allows for the following model selection criteria to choose the number of clusters:
+#' \code{JANE} allows for the following model selection criteria to choose the number of clusters (smaller values are favored):
 #' \itemize{
-#'      \item{\code{'BIC_logit'}: BIC computed from logistic regression component}
+#'      \item{\code{'BIC_model'}: BIC computed from logistic regression or Hurdle model component}
 #'      \item{\code{'BIC_mbc'}: BIC computed from model based clustering component}
 #'      \item{\code{'ICL_mbc'}: ICL (Biernacki et al. (2000)) computed from model based clustering component}
-#'      \item{\code{'Total_BIC'}: Sum of \code{'BIC_logit'} and \code{'BIC_mbc'}, this is the model selection criterion proposed by Handcock et al. (2007)}
-#'      \item{\code{'Total_ICL'}: (default) sum of \code{'BIC_logit'} and \code{'ICL_mbc'}, this criterion is similar to \code{'Total_BIC'}, but uses ICL for the model based clustering component which tends to favor more well-separated clusters.}
+#'      \item{\code{'Total_BIC'}: Sum of \code{'BIC_model'} and \code{'BIC_mbc'}, this is the model selection criterion proposed by Handcock et al. (2007)}
+#'      \item{\code{'Total_ICL'}: (default) sum of \code{'BIC_model'} and \code{'ICL_mbc'}, this criterion is similar to \code{'Total_BIC'}, but uses ICL for the model based clustering component, which tends to favor more well-separated clusters.}
 #'}
 #' 
 #' \emph{Warning}: It is not certain whether it is appropriate to use the model selection criterion above to select \code{D}.
@@ -119,7 +127,7 @@
 #'                         mus = mus, 
 #'                         omegas = omegas, 
 #'                         p = p, 
-#'                         beta0 = beta0, 
+#'                         params_LR = list(beta0 = beta0),
 #'                         remove_isolates = TRUE)
 #'                         
 #' # Run JANE on simulated data
@@ -211,13 +219,16 @@
 JANE <- function(A,
                  D = 2,
                  K = 2,
+                 family = "bernoulli",
+                 noise_weights = FALSE,
+                 guess_noise_weights = NULL,
                  model,
                  initialization = "GNN", 
                  case_control = FALSE,
                  DA_type = "none", 
                  seed = NULL, 
                  control = list()){
-
+  
   con <- list(
     verbose = FALSE,
     max_its = 1e3, 
@@ -264,17 +275,14 @@ JANE <- function(A,
   cl$case_control <- NULL
   cl$seed <- NULL
   cl$DA_type <- NULL
-
+  cl$family <- eval(family)
+  cl$noise_weights <- eval(noise_weights)
+  
   # Check for class of A
   if(!"dgCMatrix" %in% class(A)){
     A <- methods::as(A, "dgCMatrix")
   }
   
-  # Stop if not unweighted network
-  if(!all(A@x == 1.0)){
-    stop("Please supply an unweighted network")
-  }
-
   # Check for self loops 
   if(!all(diag(A) == 0.0)){
     stop("Self-loop(s) detected (i.e., diagonal element(s) of A are not 0)")
@@ -320,6 +328,134 @@ JANE <- function(A,
     } else {
       stop("A needs to be symmetric for model = ", model)
     }
+  }
+  
+  # Check family input
+  if(!family %in% c("bernoulli", "lognormal", "poisson")){
+    stop("family needs to be one of the following: 'bernoulli', 'lognormal', 'poisson'")
+  }
+  
+  # Check if edges weights are >0
+  if(!all(A@x > 0.0)){
+    stop("Negative edge weights detected, edge weights need to be >0. This error can also be generated if a sparse adjacency matrix is supplied containing values of 0 for its 'non-zero' values (e.g., if a 'non-zero' element in the sparse matrix is replaced by a 0).")
+  }
+  
+  # Check if weighted network supplied for family = "bernoulli" and ask user if they want to convert to an unweighted network
+  if(family == "bernoulli" & !all(A@x == 1.0)){
+    
+    input <- utils::menu(c("Yes", "No"), 
+                         title = paste0("Weighted edges found in A matrix for family = ",
+                                        family, ", do you want to convert the edges in the A matrix to unweighted edges?"))
+    if(input == 1){
+      A <- 1.0 * ( A > 0.0 )
+      message("Converting edges in A to unweighted edges")
+    } else {
+      stop("A needs to have unweighted edges for family = ", family)
+    }
+    
+  }
+  
+  # Check if unweighted network supplied for family %in% c("lognormal", "poisson")
+  if(family %in% c("lognormal", "poisson") & all(A@x == 1.0)){
+    stop(paste0("Edges in the A matrix are unweighted with family = ", family, ". Please supply an A matrix with weighted edges for family %in% c('lognormal', 'poisson')"))
+  }
+  
+  # Check if discrete data not supplied for family = "poisson"
+  if(family == "poisson" & !all( (A@x %% 1.0) == 0.0 ) ){
+    stop(paste0("Non-discrete edge weights detected with family = ", family, ". Please supply an A matrix with discrete edge weights for family == 'poisson'"))
+  }
+  
+  # Check noise_weights input convert to unweighted network if noise_weights == FALSE & family %in% c("lognormal", "poisson")
+  if(!noise_weights & family %in% c("lognormal", "poisson")){
+    A <- 1.0 * ( A > 0.0 )
+    family <- "bernoulli"
+    message("noise_weights == FALSE & family %in% c('lognormal', 'poisson'), converting A to unweighted matrix and fitting latent space cluster model assuming no noise weights and family = 'bernoulli'")
+  }
+  
+  # Check guess_noise_weights
+  if(!noise_weights){
+    
+    guess_noise_weights <- NULL
+    q_prob <- NULL
+    
+  } else {
+    
+    if(is.null(guess_noise_weights)){
+      
+      if(family != 'bernoulli'){
+        
+        prob_noise <- 0.01
+        
+        if(family == "poisson"){
+          guess_noise_weights <- unname(stats::quantile(x = A@x, 
+                                                        probs = prob_noise))
+          density_A <- sum(A@x > guess_noise_weights)/(nrow(A) * (nrow(A)-1.0))
+        } else {
+          guess_noise_weights <- unname(stats::quantile(x = log(A@x), 
+                                                        probs = prob_noise))
+          density_A <- sum(log(A@x) > guess_noise_weights)/(nrow(A) * (nrow(A)-1.0))
+        }
+        
+        q_prob <- (prob_noise*density_A)/((1.0-density_A)*(1.0-prob_noise))
+        
+      } else {
+        
+        guess_noise_weights <- 0.01
+        density_A <- (length(A@x) * (1.0-guess_noise_weights))/(nrow(A) * (nrow(A)-1.0))
+        q_prob <- (guess_noise_weights*density_A)/((1.0-density_A)*(1.0-guess_noise_weights))
+        
+      }
+      
+    } else {
+      
+      if(family != 'bernoulli'){
+        
+        if (guess_noise_weights <= 0 & family == "poisson"){
+          stop("Please supply a postive non-zero numeric value for guess_noise_weights with family = 'poisson'.")
+        }
+       
+        if (family == "poisson"){
+          prob_noise <- mean(A@x <= guess_noise_weights)
+          density_A <- sum(A@x > guess_noise_weights)/(nrow(A) * (nrow(A)-1.0))
+          q_prob <- (prob_noise*density_A)/((1.0-density_A)*(1.0-prob_noise))
+        } else {
+          prob_noise <- mean(log(A@x) <= guess_noise_weights)
+          density_A <- sum(log(A@x) > guess_noise_weights)/(nrow(A) * (nrow(A)-1.0))
+          q_prob <- (prob_noise*density_A)/((1.0-density_A)*(1.0-prob_noise))
+        }
+        
+      } else {
+        if(!(0 < guess_noise_weights & guess_noise_weights < 1)){
+          stop("Please supply a vaild proportion in (0,1) for guess_noise_weights with family ='bernoulli'.")
+        }
+
+        density_A <- (length(A@x) * (1.0-guess_noise_weights))/(nrow(A) * (nrow(A)-1.0))
+        q_prob <- (guess_noise_weights*density_A)/((1.0-density_A)*(1.0-guess_noise_weights))
+        
+      }
+      
+    }
+  }
+
+  cl$guess_noise_weights <- eval(guess_noise_weights)
+  cl$q_prob <- eval(q_prob)
+
+  # Extract edge indices and weights and store as prob_matrix_W
+  prob_matrix_W <- cbind(as.matrix(summary(A)), 1.0, 0.0)
+  colnames(prob_matrix_W) <- c("i", "j", "weight", "hat_zij1", "hat_zij2")  
+  
+  # Only store upper triangular for RS and NDH as it is symmetric
+  if(model != "RSR"){
+    
+    prob_matrix_W <- prob_matrix_W[prob_matrix_W[,"j"]>prob_matrix_W[,"i"], , drop = FALSE]
+    
+  }
+  
+  cl$prob_matrix_W <- eval(prob_matrix_W)
+  
+  # Convert A into unweighted network (weights already extracted and stored in prob_matrix_W)
+  if(!all(A@x == 1.0)){
+    A <- 1.0 * ( A > 0.0 )
   }
   
   # Check initialization
@@ -376,8 +512,8 @@ JANE <- function(A,
   con[namc] <- control
   
   # Check value of IC_selection
-  if(!con[["IC_selection"]] %in% c("BIC_logit", "BIC_mbc", "ICL_mbc", "Total_BIC", "Total_ICL")) {
-    stop("Please provide one of the following for IC_selection: 'BIC_logit', 'BIC_mbc', 'ICL_mbc', 'Total_BIC', or 'Total_ICL'")
+  if(!con[["IC_selection"]] %in% c("BIC_model", "BIC_mbc", "ICL_mbc", "Total_BIC", "Total_ICL")) {
+    stop("Please provide one of the following for IC_selection: 'BIC_model', 'BIC_mbc', 'ICL_mbc', 'Total_BIC', or 'Total_ICL'")
   } 
   
   # Check value of n_control supplied and compute n_control
@@ -390,9 +526,14 @@ JANE <- function(A,
     stop("Please supply a quantile_diff in [0,1]")
   }
   
-  # Check termination rule supplied and create array for results
-  if (!con[["termination_rule"]] %in% c("ARI", "NMI", "CER", "prob_mat","Q")){
+  # Check termination rule supplied 
+  if(!con[["termination_rule"]] %in% c("ARI", "NMI", "CER", "prob_mat", "Q")){
     stop("Please provide one of the following termination rules: 'ARI', 'NMI', 'CER', 'prob_mat', or 'Q'")
+  }
+  
+  # Check termination rule supplied when noise_weights = TRUE
+  if(noise_weights & (con[["termination_rule"]] %in% c("ARI", "NMI", "CER", "Q"))){
+    stop("For the current implementation, when noise_weights = TRUE the only available termination_rule is 'prob_mat'")
   }
   
   # Check n_its_start_CA
@@ -415,7 +556,16 @@ JANE <- function(A,
                          K = K,
                          D = D,
                          n_interior_knots = con$n_interior_knots,
-                         model = model)
+                         model = model,
+                         family = family,
+                         noise_weights = noise_weights)
+    
+    if(noise_weights){
+      initialization$q_prob <- q_prob
+      initialization$guess_noise_weights <- guess_noise_weights
+      cl$initialization <- eval(initialization)
+    }
+    
   }
   
   # Check prior if supplied
@@ -424,7 +574,9 @@ JANE <- function(A,
                  D = D,
                  K = K,
                  n_interior_knots = con$n_interior_knots,
-                 model = model)
+                 model = model,
+                 family = family,
+                 noise_weights = noise_weights)
   }
   
   combinations_2run <- as.matrix(expand.grid(K = unique(K), D = unique(D), n_start = 1:con$n_start))
@@ -491,7 +643,7 @@ JANE <- function(A,
   
   optimal_res <- parallel_res[[optimal_pos]]$EM_results
   if (length(optimal_res) > 1){
-    optimal_res[["cluster_labels"]] <- apply(optimal_res$prob_mat, 1, which.max)
+    optimal_res[["cluster_labels"]] <- apply(optimal_res$prob_matrix, 1, which.max)
     names(optimal_res[["cluster_labels"]]) <- ids
     rownames(optimal_res$prob_matrix) <- ids
     rownames(optimal_res$U) <- ids
@@ -501,8 +653,7 @@ JANE <- function(A,
   
   optimal_starting <- parallel_res[[optimal_pos]]$starting_params
   if(!is.null(optimal_starting) & is.list(optimal_starting)){
-    optimal_starting[["model"]] <- model
-    optimal_starting[["cluster_labels"]] <- apply(optimal_starting$prob_mat, 1, which.max)
+    optimal_starting[["cluster_labels"]] <- apply(optimal_starting$prob_matrix, 1, which.max)
     names(optimal_starting[["cluster_labels"]]) <- ids
     rownames(optimal_starting$prob_matrix) <- ids
     rownames(optimal_starting$U) <- ids
@@ -539,7 +690,10 @@ JANE <- function(A,
                         optimal_starting = optimal_starting[sort(names(optimal_starting))],
                         input_params =  list(IC_selection = con$IC_selection,
                                              case_control = case_control,
-                                             DA_type = DA_type),
+                                             DA_type = DA_type,
+                                             model = model,
+                                             family = family,
+                                             noise_weights = noise_weights),
                         IC_out = IC_out,
                         all_convergence_ind = all_convergence_ind,
                         A = A), class = "JANE"))
@@ -551,6 +705,9 @@ EM_inner <- function(A,
                      D,
                      K,
                      model,
+                     noise_weights,
+                     prob_matrix_W,
+                     family,
                      starting_params,
                      control,
                      ...){
@@ -560,6 +717,9 @@ EM_inner <- function(A,
   # Run initialize function
   current <- suppressWarnings(initialize_fun(A = A,
                                              list_name = starting_params, 
+                                             family = family,
+                                             noise_weights = noise_weights,
+                                             prob_matrix_W = prob_matrix_W,
                                              model = model, 
                                              n_interior_knots = control$n_interior_knots,
                                              n_control = control$n_control, 
@@ -570,10 +730,27 @@ EM_inner <- function(A,
   current$termination_rule <- control$termination_rule
   
   current$termination_metric <- array(NA, dim = c(control$max_its, 
-                                                  ncol = 6 + (!(control$termination_rule %in% c("ARI", "NMI", "CER", "Q"))) - (control$termination_rule == "Q"),
+                                                  ncol = 6 + (!(control$termination_rule %in% c("ARI", "NMI", "CER", "Q"))) - (control$termination_rule == "Q") + 2*(current$noise_weights)*(control$termination_rule != "Q"),
                                                   length(control$beta_temp_schedule)))
   
-  colnames(current$termination_metric) <- if(ncol(current$termination_metric) == 7){
+  colnames(current$termination_metric) <- if(ncol(current$termination_metric) == 9){
+    
+    c("ARI", "NMI", "CER", 
+      paste0(control$termination_rule, ifelse(control$termination_rule == "prob_mat", 
+                                              paste0("_*",control$quantile_diff),
+                                              "")), 
+      paste0(control$termination_rule, "_W", ifelse(control$termination_rule == "prob_mat", 
+                                              paste0("_*",control$quantile_diff),
+                                              "")), 
+      "abs_diff_U", "abs_diff_MA_metric", "abs_diff_MA_metric_W", "abs_diff_MA_U")
+  
+  } else if(ncol(current$termination_metric) == 8){
+    
+    c("ARI", "NMI", "CER", paste0(control$termination_rule, "_W"), 
+      "abs_diff_U", "abs_diff_MA_metric", "abs_diff_MA_metric_W", "abs_diff_MA_U")
+    
+  } else if(ncol(current$termination_metric) == 7){
+    
     c("ARI", "NMI", "CER", paste0(control$termination_rule, ifelse(control$termination_rule == "prob_mat", 
                                                                    paste0("_*",control$quantile_diff),
                                                                    "")), 
@@ -586,8 +763,8 @@ EM_inner <- function(A,
   } else { 
     
     c("ARI", "NMI", "CER", "abs_diff_U", "abs_diff_MA", "abs_diff_MA_U")
+    
   }
-  
   
   col_term_metric <- grep(control$termination_rule, 
                           colnames(current$termination_metric))
@@ -617,6 +794,76 @@ EM_inner <- function(A,
                                           mus = current$mus, omegas = current$omegas, 
                                           p = current$p, U = current$U,
                                           temp_beta = as.double(control$beta_temp_schedule[beta_temp]))
+      
+      if(noise_weights){
+        
+        # update prob_matrix_W
+        current$fun_list$update_prob_matrix_W(prob_matrix_W = current$prob_matrix_W,
+                                              model = current$model,
+                                              family = current$family,
+                                              beta = current$beta,
+                                              beta2 = if(current$family == "bernoulli"){matrix(0.0, 1, 1)}else{current$beta2},
+                                              precision_weights = ifelse(current$family != "lognormal", 0.0, current$precision_weights),
+                                              precision_noise_weights = ifelse(current$family != "lognormal", 0.0, current$precision_noise_weights),
+                                              guess_noise_weights = current$guess_noise_weights,
+                                              U = current$U,
+                                              X = current$X,
+                                              X2 = if(current$family == "bernoulli"){matrix(0.0, 1, 1)}else{current$X2},
+                                              q = current$q_prob,
+                                              temp_beta = as.double(control$beta_temp_schedule[beta_temp]))
+        
+        # update A
+        A[current$prob_matrix_W[, 1:2, drop = FALSE]] <- current$prob_matrix_W[, 4]
+        
+        if(current$model != "RSR"){
+          A[current$prob_matrix_W[, 2:1, drop = FALSE]] <- current$prob_matrix_W[, 4]
+        }
+        
+        # update q_prob
+        current$fun_list$update_q_prob(q_prob = current$q_prob,
+                                       prob_matrix_W = current$prob_matrix_W,
+                                       N = nrow(A),
+                                       model = current$model,
+                                       h = current$priors$h,
+                                       l = current$priors$l)
+        
+        if(family != "bernoulli"){
+          
+          # update beta2
+          update_beta2(beta2 = current$beta2,
+                       prob_matrix_W = current$prob_matrix_W,
+                       X2 = current$X2, 
+                       model = current$model, 
+                       family = current$family,
+                       f_2 = if(current$model == "NDH"){matrix(current$priors$f_2, 1, 1)}else{current$priors$f_2}, 
+                       e_2 = if(current$model == "NDH"){matrix(current$priors$e_2, 1, 1)}else{current$priors$e_2})
+          
+          
+        }
+        
+        if (family == "lognormal"){
+          
+          # update precision_weights
+          update_precision_weights(precision_weights = current$precision_weights,
+                                   beta2 = current$beta2,
+                                   prob_matrix_W = current$prob_matrix_W,
+                                   X2 = current$X2, 
+                                   model = current$model, 
+                                   f_2 = if(current$model == "NDH"){matrix(current$priors$f_2, 1, 1)}else{current$priors$f_2}, 
+                                   e_2 = if(current$model == "NDH"){matrix(current$priors$e_2, 1, 1)}else{current$priors$e_2},
+                                   m_1 = current$priors$m_1,
+                                   o_1 = current$priors$o_1)
+          
+          # update precision_noise_weights
+          update_precision_noise_weights(precision_noise_weights = current$precision_noise_weights,
+                                         prob_matrix_W = current$prob_matrix_W,
+                                         guess_noise_weights = current$guess_noise_weights,
+                                         m_2 = current$priors$m_2,
+                                         o_2 = current$priors$o_2)
+          
+        }
+        
+      }
       
       # update U
       current$fun_list$update_U(U = current$U, 
@@ -649,6 +896,7 @@ EM_inner <- function(A,
                                    X =  current$X,
                                    model = current$model)
       
+      
       # check termination
       check_convergence <- terminate_EM(A = A,
                                         current = current,  
@@ -668,10 +916,26 @@ EM_inner <- function(A,
       
       if(n_its <= control$n_its_start_CA){
         
-        MA <- ifelse(is.infinite(check_convergence$metric[col_term_metric]), 0,
-                     check_convergence$metric[col_term_metric])
-        diff_MA <- Inf
-        counter <- 0
+        if(!noise_weights){
+          
+          MA <- ifelse(is.infinite(check_convergence$metric[col_term_metric]), 0,
+                       check_convergence$metric[col_term_metric])
+          diff_MA <- Inf
+          counter <- 0
+          
+        } else {
+          
+          MA <- ifelse(is.infinite(check_convergence$metric[col_term_metric[1]]), 0,
+                       check_convergence$metric[col_term_metric[1]])
+          diff_MA <- Inf
+          counter <- 0
+          
+          MA_W <- ifelse(is.infinite(check_convergence$metric[col_term_metric[2]]), 0,
+                       check_convergence$metric[col_term_metric[2]])
+          diff_MA_W <- Inf
+          counter_W <- 0
+          
+        }
         
         if(control$termination_rule != "Q"){
           MA_U <- ifelse(is.infinite(check_convergence$metric[col_term_U]), 0,
@@ -683,10 +947,27 @@ EM_inner <- function(A,
       } else {
         
         n_its_temp <- n_its-control$n_its_start_CA+1
-        diff_MA_prev <- diff_MA
-        diff_MA <- abs( ((MA - check_convergence$metric[col_term_metric]))/(n_its_temp) )
-        counter <- (counter + 1) * (diff_MA<control$tolerance_diff_CA)*(diff_MA_prev<control$tolerance_diff_CA)
-        MA <- (check_convergence$metric[col_term_metric] + (n_its_temp-1)*MA)/(n_its_temp)
+        
+        if(!noise_weights){
+          
+          diff_MA_prev <- diff_MA
+          diff_MA <- abs( ((MA - check_convergence$metric[col_term_metric]))/(n_its_temp) )
+          counter <- (counter + 1) * (diff_MA<control$tolerance_diff_CA)*(diff_MA_prev<control$tolerance_diff_CA)
+          MA <- (check_convergence$metric[col_term_metric] + (n_its_temp-1)*MA)/(n_its_temp)
+          
+        } else {
+         
+          diff_MA_prev <- diff_MA
+          diff_MA <- abs( ((MA - check_convergence$metric[col_term_metric[1]]))/(n_its_temp) )
+          counter <- (counter + 1) * (diff_MA<control$tolerance_diff_CA)*(diff_MA_prev<control$tolerance_diff_CA)
+          MA <- (check_convergence$metric[col_term_metric[1]] + (n_its_temp-1)*MA)/(n_its_temp)
+          
+          diff_MA_prev_W <- diff_MA_W
+          diff_MA_W <- abs( ((MA_W - check_convergence$metric[col_term_metric[2]]))/(n_its_temp) )
+          counter_W <- (counter_W + 1) * (diff_MA_W<control$tolerance_diff_CA)*(diff_MA_prev_W<control$tolerance_diff_CA)
+          MA_W <- (check_convergence$metric[col_term_metric[2]] + (n_its_temp-1)*MA_W)/(n_its_temp)
+          
+        }
         
         if(control$termination_rule != "Q"){
           diff_MA_U_prev <- diff_MA_U
@@ -699,14 +980,28 @@ EM_inner <- function(A,
       
       if(control$termination_rule != "Q"){
         
-        current$termination_metric[n_its,,beta_temp] <- c(check_convergence$metric, diff_MA, diff_MA_U)
-        
-        if((check_convergence$terminate | (counter >= control$consecutive_diff_CA & counter_U >= control$consecutive_diff_CA)) & (n_its > control$min_its)){
-          current$convergence_ind[beta_temp, "convergence_ind"] <- 1L
-          current$convergence_ind[beta_temp, "n_iterations"] <- n_its
-          break
+        if(!noise_weights){
+          
+          current$termination_metric[n_its,,beta_temp] <- c(check_convergence$metric, diff_MA, diff_MA_U)
+          
+          if((check_convergence$terminate | (counter >= control$consecutive_diff_CA & counter_U >= control$consecutive_diff_CA)) & (n_its > control$min_its)){
+            current$convergence_ind[beta_temp, "convergence_ind"] <- 1L
+            current$convergence_ind[beta_temp, "n_iterations"] <- n_its
+            break
+          }
+          
+        } else {
+          
+          current$termination_metric[n_its,,beta_temp] <- c(check_convergence$metric, diff_MA, diff_MA_W, diff_MA_U)
+          
+          if((check_convergence$terminate | (counter >= control$consecutive_diff_CA & counter_W >= control$consecutive_diff_CA & counter_U >= control$consecutive_diff_CA)) & (n_its > control$min_its)){
+            current$convergence_ind[beta_temp, "convergence_ind"] <- 1L
+            current$convergence_ind[beta_temp, "n_iterations"] <- n_its
+            break
+          }
+          
         }
-        
+
       } else {
         
         current$termination_metric[n_its,,beta_temp] <- c(check_convergence$metric, diff_MA)
@@ -734,13 +1029,14 @@ EM_inner <- function(A,
                                                        function(x){x[apply(x,1, function(x){!any(is.na(x) & !is.nan(x))}),]},
                                                        simplify = F))
   
-  dont_return_names <- c("log_Q", "previous_prob_mat", "previous_U", "fun_list")
+
+  dont_return_names <- c("log_Q", "previous_prob_mat", "previous_prob_mat_W", "previous_U", "fun_list")
   out <- mget(x = names(current)[!(names(current) %in% dont_return_names)], envir = current)
   
   # Get IC info
   out$IC <- unlist(BICL(A = A, object = out))
-
-  return(out[!(names(out) %in% "X")])
+  
+  return(out[!(names(out) %in% c("X", "X2", "model", "family", "noise_weights"))])
   
 }
 
@@ -756,14 +1052,17 @@ inner_parallel <- function(x, call_def, A){
   
   while(retry & retry_counter <= call_def$control$max_retry){
     
-    if (!is.list(call_def$initialization)){
+    if(!is.list(call_def$initialization)){
       
       call_def[[1]] <- as.symbol("initialize_starting_values")
       call_def$random_start <- ifelse(call_def$initialization == "GNN", F, T)
       call_def$starting_params <- eval(call_def)
       
-    } else{
+    } else {
+      
       call_def$starting_params <- call_def$initialization
+      retry_counter <- Inf
+      
     }
     
     run_fun <- tryCatch(
@@ -774,19 +1073,24 @@ inner_parallel <- function(x, call_def, A){
       
       error = function(e) {
         if(call_def$control$verbose){
-          message("Issues with starting values. Retrying with new starting values.\n")
+          if(!is.list(call_def$initialization)){
+            message("Issues with starting values. Retrying with new starting values.\n")
+          } 
         }
         NA
       },
+      
       warning = function(w) {
         if(call_def$control$verbose){
-          message("Issues with starting values. Retrying with new starting values.\n")
+          if(!is.list(call_def$initialization)){
+            message("Issues with starting values. Retrying with new starting values.\n")
+          } 
         }
         NA
       }
     ) 
     
-    if (length(run_fun)>1){
+    if(length(run_fun)>1){
       
       return(list(EM_results = run_fun,
                   starting_params = call_def$starting_params))
@@ -801,9 +1105,14 @@ inner_parallel <- function(x, call_def, A){
   
   if(retry){
     
-    warning("Max re-try (i.e., max_retry) attempts reached. Issues with starting values. Returning Inf values. If this occurs often consider using alternative initialization.")
+    if(!is.list(call_def$initialization)){
+      warning("Max retry (i.e., max_retry) attempts reached. Issues with starting values. Returning Inf values. If this occurs often consider using alternative initialization.")
+    } else {
+      warning("Issues with starting values. Returning Inf values. Consider using alternative initialization.")
+    }
+
     
-    return(list(EM_results = list(IC = c(BIC_logit = Inf,
+    return(list(EM_results = list(IC = c(BIC_model = Inf,
                                          BIC_mbc = Inf,
                                          ICL_mbc = Inf,
                                          Total_BIC = Inf,
@@ -855,6 +1164,11 @@ update_beta_RE_CC <- function(beta, A, n_control, U, f, e, X, model) {
 }
 
 #' @useDynLib JANE  
+update_beta2 <- function(beta2, prob_matrix_W, f_2, e_2, X2, model, family) {
+  invisible(.Call('_JANE_update_beta2', PACKAGE = 'JANE', beta2, prob_matrix_W, f_2, e_2, X2, model, family))
+}
+
+#' @useDynLib JANE  
 update_mus_omegas <- function(prob_matrix, U, b, a, c, G, mus, omegas) {
   invisible(.Call('_JANE_update_mus_omegas', PACKAGE = 'JANE', prob_matrix, U, b, a, c, G, mus, omegas))
 }
@@ -869,3 +1183,32 @@ update_prob_matrix_DA <- function(prob_matrix, mus, omegas, p, U, temp_beta) {
   invisible(.Call('_JANE_update_prob_matrix_DA', PACKAGE = 'JANE', prob_matrix, mus, omegas, p, U, temp_beta))
 }
 
+#' @useDynLib JANE  
+update_prob_matrix_W_DA <- function(prob_matrix_W, model, family, beta, beta2, precision_weights, precision_noise_weights, guess_noise_weights, U, X, X2, q, temp_beta) {
+  invisible(.Call('_JANE_update_prob_matrix_W_DA', PACKAGE = 'JANE', prob_matrix_W, model, family, beta, beta2, precision_weights, precision_noise_weights, guess_noise_weights, U, X, X2, q, temp_beta))
+}
+
+#' @useDynLib JANE  
+update_q_prob <- function(q_prob, prob_matrix_W, model, N, h, l) {
+  invisible(.Call('_JANE_update_q_prob', PACKAGE = 'JANE', q_prob, prob_matrix_W, model, N, h, l))
+}
+
+#' @useDynLib JANE  
+trunc_poisson_density <- function(w, mean, log) {
+  .Call('_JANE_trunc_poisson_density', PACKAGE = 'JANE', w, mean, log)
+}
+
+#' @useDynLib JANE  
+lognormal_density <- function(w, precision, mean, log) {
+  .Call('_JANE_lognormal_density', PACKAGE = 'JANE', w, precision, mean, log)
+}
+
+#' @useDynLib JANE  
+update_precision_weights <- function(precision_weights, prob_matrix_W, model, beta2, X2, m_1, o_1, f_2, e_2) {
+  invisible(.Call('_JANE_update_precision_weights', PACKAGE = 'JANE', precision_weights, prob_matrix_W, model, beta2, X2, m_1, o_1, f_2, e_2))
+}
+
+#' @useDynLib JANE  
+update_precision_noise_weights <- function(precision_noise_weights, prob_matrix_W, guess_noise_weights, m_2, o_2) {
+  invisible(.Call('_JANE_update_precision_noise_weights', PACKAGE = 'JANE', precision_noise_weights, prob_matrix_W, guess_noise_weights, m_2, o_2))
+}

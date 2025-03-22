@@ -4,7 +4,29 @@
 \alias{specify_priors}
 \title{Specify prior hyperparameters for EM algorithm}
 \usage{
-specify_priors(D, K, model, n_interior_knots = NULL, a, b, c, G, nu, e, f)
+specify_priors(
+  D,
+  K,
+  model,
+  family = "bernoulli",
+  noise_weights = FALSE,
+  n_interior_knots = NULL,
+  a,
+  b,
+  c,
+  G,
+  nu,
+  e,
+  f,
+  h,
+  l,
+  e_2,
+  f_2,
+  m_1,
+  o_1,
+  m_2,
+  o_2
+)
 }
 \arguments{
 \item{D}{An integer specifying the dimension of the latent positions.}
@@ -18,27 +40,52 @@ specify_priors(D, K, model, n_interior_knots = NULL, a, b, c, G, nu, e, f)
 \item{'RSR': \strong{directed} network with degree heterogeneity}
 }}
 
+\item{family}{A character string specifying the distribution of the edge weights.
+\itemize{
+\item{'bernoulli': for \strong{unweighted} networks; utilizes a Bernoulli distribution with a logit link (default)}
+\item{'lognormal': for \strong{weighted} networks with positive, non-zero, continuous edge weights; utilizes a log-normal distribution with an identity link}
+\item{'poisson': for \strong{weighted} networks with edge weights representing non-zero counts; utilizes a zero-truncated Poisson distribution with a log link}
+}}
+
+\item{noise_weights}{A logical; if TRUE then a Hurdle model is used to account for noise weights, if FALSE simply utilizes the supplied network (converted to an unweighted binary network if a weighted network is supplied, i.e., (A > 0.0)*1.0) and fits a latent space cluster model (default is FALSE).}
+
 \item{n_interior_knots}{An integer specifying the number of interior knots used in fitting a natural cubic spline for degree heterogeneity models (i.e., 'RS' and 'RSR' only; default is \code{NULL}).}
 
 \item{a}{A numeric vector of length \eqn{D} specifying the mean of the multivariate normal prior on \eqn{\mu_k} for \eqn{k = 1,\ldots,K}, where \eqn{\mu_k} represents the mean of the multivariate normal distribution for the latent positions of the \eqn{k^{th}} cluster.}
 
-\item{b}{A numeric value specifying the scaling factor on the precision of the multivariate normal prior on \eqn{\mu_k} for \eqn{k = 1,\ldots,K}, where \eqn{\mu_k} represents the mean of the multivariate normal distribution for the latent positions of the \eqn{k^{th}} cluster.}
+\item{b}{A positive numeric scalar specifying the scaling factor on the precision of the multivariate normal prior on \eqn{\mu_k} for \eqn{k = 1,\ldots,K}, where \eqn{\mu_k} represents the mean of the multivariate normal distribution for the latent positions of the \eqn{k^{th}} cluster.}
 
-\item{c}{A numeric value specifying the degrees of freedom of the Wishart prior on \eqn{\Omega_k} for \eqn{k = 1,\ldots,K}, where \eqn{\Omega_k} represents the precision of the multivariate normal distribution for the latent positions of the \eqn{k^{th}} cluster.}
+\item{c}{A numeric scalar \eqn{\ge} \eqn{D} specifying the degrees of freedom of the Wishart prior on \eqn{\Omega_k} for \eqn{k = 1,\ldots,K}, where \eqn{\Omega_k} represents the precision of the multivariate normal distribution for the latent positions of the \eqn{k^{th}} cluster.}
 
 \item{G}{A numeric \eqn{D \times D} matrix specifying the inverse of the scale matrix of the Wishart prior on \eqn{\Omega_k} for \eqn{k = 1,\ldots,K}, where \eqn{\Omega_k} represents the precision of the multivariate normal distribution for the latent positions of the \eqn{k^{th}} cluster.}
 
-\item{nu}{A numeric vector of length \eqn{K} specifying the concentration parameters of the Dirichlet prior on \eqn{p}, where \eqn{p} represents the mixture weights of the finite multivariate normal mixture distribution for the latent positions.}
+\item{nu}{A positive numeric vector of length \eqn{K} specifying the concentration parameters of the Dirichlet prior on \eqn{p}, where \eqn{p} represents the mixture weights of the finite multivariate normal mixture distribution for the latent positions.}
 
-\item{e}{A numeric vector of length \code{1 + (model =='RS')*(n_interior_knots + 1) +  (model =='RSR')*2*(n_interior_knots + 1)} specifying the mean of the multivariate normal prior on \eqn{\beta}, where \eqn{\beta} represents the coefficients of the logistic regression model.}
+\item{e}{A numeric vector of length \code{1 + (model =='RS')*(n_interior_knots + 1) +  (model =='RSR')*2*(n_interior_knots + 1)} specifying the mean of the multivariate normal prior on \eqn{\beta_{LR}}, where \eqn{\beta_{LR}} represents the coefficients of the logistic regression model.}
 
-\item{f}{A numeric square matrix of dimension \code{1 + (model =='RS')*(n_interior_knots + 1) +  (model =='RSR')*2*(n_interior_knots + 1)} specifying the precision of the multivariate normal prior on \eqn{\beta}, where \eqn{\beta} represents the coefficients of the logistic regression model.}
+\item{f}{A numeric p.s.d square matrix of dimension \code{1 + (model =='RS')*(n_interior_knots + 1) +  (model =='RSR')*2*(n_interior_knots + 1)} specifying the precision of the multivariate normal prior on \eqn{\beta_{LR}}, where \eqn{\beta_{LR}} represents the coefficients of the logistic regression model.}
+
+\item{h}{A positive numeric scalar specifying the first shape parameter for the Beta prior on \eqn{q}, where \eqn{q} is the proportion of non-edges in the "true" underlying network converted to noise edges. Only relevant when \code{noise_weights = TRUE}.}
+
+\item{l}{A positive numeric scalar specifying the second shape parameter for the Beta prior on \eqn{q}, where \eqn{q} is the proportion of non-edges in the "true" underlying network converted to noise edges. Only relevant when \code{noise_weights = TRUE}.}
+
+\item{e_2}{A numeric vector of length \code{1 + (model =='RS')*(n_interior_knots + 1) +  (model =='RSR')*2*(n_interior_knots + 1)} specifying the mean of the multivariate normal prior on \eqn{\beta_{GLM}}, where \eqn{\beta_{GLM}} represents the coefficients of the zero-truncated Poisson or log-normal GLM. Only relevant when \code{noise_weights = TRUE & family != 'bernoulli'}.}
+
+\item{f_2}{A numeric p.s.d square matrix of dimension \code{1 + (model =='RS')*(n_interior_knots + 1) +  (model =='RSR')*2*(n_interior_knots + 1)} specifying the precision of the multivariate normal prior on \eqn{\beta_{GLM}}, where \eqn{\beta_{GLM}} represents the coefficients of the zero-truncated Poisson or log-normal GLM. Only relevant when \code{noise_weights = TRUE & family != 'bernoulli'}.}
+
+\item{m_1}{A positive numeric scalar specifying the shape parameter for the Gamma prior on \eqn{\tau^2_{weights}}, where \eqn{\tau^2_{weights}} is the precision (on the log scale) of the log-normal weight distribution. Note, this value is scaled by 0.5, see 'Details'. Only relevant when \code{noise_weights = TRUE & family = 'lognormal'}.}
+
+\item{o_1}{A positive numeric scalar specifying the rate parameter for the Gamma prior on \eqn{\tau^2_{weights}}, where \eqn{\tau^2_{weights}} is the precision (on the log scale) of the log-normal weight distribution. Note, this value is scaled by 0.5, see 'Details'. Only relevant when \code{noise_weights = TRUE & family = 'lognormal'}.}
+
+\item{m_2}{A positive numeric scalar specifying the shape parameter for the Gamma prior on \eqn{\tau^2_{noise \ weights}}, where \eqn{\tau^2_{noise \ weights}} is the precision (on the log scale) of the log-normal noise weight distribution. Note, this value is scaled by 0.5, see 'Details'. Only relevant when \code{noise_weights = TRUE & family = 'lognormal'}.}
+
+\item{o_2}{A positive numeric scalar specifying the rate parameter for the Gamma prior on \eqn{\tau^2_{noise \ weights}}, where \eqn{\tau^2_{noise \ weights}} is the precision (on the log scale) of the log-normal noise weight distribution. Note, this value is scaled by 0.5, see 'Details'. Only relevant when \code{noise_weights = TRUE & family = 'lognormal'}.}
 }
 \value{
 A list of prior hyperparameters for the EM algorithm generated from the input values in a structure accepted by \code{JANE}.
 }
 \description{
-A function that allows the user to specify the prior hyperparameters for the EM algorithm in a structure accepted by \code{JANE}.
+A function that allows the user to specify the prior hyperparameters for the EM algorithm in a structure accepted by \code{\link[JANE]{JANE}}.
 }
 \details{
 \strong{Prior on \eqn{\mu_k} and \eqn{\Omega_k}} (note: the same prior is used for \eqn{k = 1,\ldots,K}) :
@@ -49,11 +96,23 @@ A function that allows the user to specify the prior hyperparameters for the EM 
 
 \strong{Prior on \eqn{p}}:
 
-For the current implementation we require that all elements of the nu vector be >= 1 to prevent against negative mixture weights for empty clusters.
+For the current implementation we require that all elements of the \code{nu} vector be \eqn{\ge 1} to prevent against negative mixture weights for empty clusters.
 \deqn{p \sim Dirichlet(\nu_1 ,\ldots,\nu_K)}
 
-\strong{Prior on \eqn{\beta}}:
-\deqn{\beta \sim MVN(e, f^{-1})}
+\strong{Prior on \eqn{\beta_{LR}}}:
+\deqn{\beta_{LR} \sim MVN(e, f^{-1})}
+
+\strong{Prior on \eqn{\beta_{GLM}}}:
+\deqn{\beta_{GLM} \sim MVN(e_{2}, f_{2}^{-1})}
+
+\strong{Prior on \eqn{q}}:
+\deqn{q \sim Beta(h, l)}
+
+\strong{Prior on \eqn{\tau^2_{weights}}}:
+\deqn{\tau^2_{weights} \sim Gamma(\frac{m_1}{2}, \frac{o_1}{2})}
+
+\strong{Prior on \eqn{\tau^2_{noise \ weights}}}:
+\deqn{\tau^2_{noise \ weights} \sim Gamma(\frac{m_2}{2}, \frac{o_2}{2})}
 }
 \examples{
 \donttest{
@@ -73,7 +132,7 @@ sim_data <- JANE::sim_A(N = 100L,
                         mus = mus, 
                         omegas = omegas, 
                         p = p, 
-                        beta0 = beta0, 
+                        params_LR = list(beta0 = beta0), 
                         remove_isolates = TRUE)
                         
                         
