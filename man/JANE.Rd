@@ -78,7 +78,7 @@ A list of S3 \code{\link{class}} "\code{JANE}" containing the following componen
 Fit a latent space cluster model, with or without noise edges, using an EM algorithm.
 }
 \details{
-Isolates are removed from the adjacency matrix A. If an unsymmetric adjacency matrix A is supplied for \code{model \%in\% c('NDH', 'RS')} the user will be asked if they would like to proceed with converting A to a symmetric matrix (i.e., \code{A <- 1.0 * ( (A + t(A)) > 0.0 )}). Additionally, if a weighted network is supplied and \code{noise_weights = FALSE}, then the network will be converted to an unweighted binary network (i.e., (A > 0.0)*1.0) and a latent space cluster model is fit.
+Isolates are removed from the adjacency matrix A. If an unsymmetric adjacency matrix A is supplied for \code{model \%in\% c('NDH', 'RS')} the user will be asked if they would like to proceed with converting A to a symmetric matrix (i.e., \code{A <- 1.0 * ( (A + t(A)) > 0.0 )}); only able to do so if \code{family = 'bernoulli'}. Additionally, if a weighted network is supplied and \code{noise_weights = FALSE}, then the network will be converted to an unweighted binary network (i.e., (A > 0.0)*1.0) and a latent space cluster model is fit.
 
 \strong{\code{control}:}
 
@@ -136,6 +136,8 @@ The \code{control} argument is a named list that the user can supply containing 
 \item{\code{'Total_ICL'}: (default) sum of \code{'BIC_model'} and \code{'ICL_mbc'}, this criterion is similar to \code{'Total_BIC'}, but uses ICL for the model based clustering component, which tends to favor more well-separated clusters.}
 }
 
+Based on simulation studies, Biernacki et al. (2000) recommends that when the interest in mixture modeling is cluster analysis, instead of density estimation, the \eqn{ICL_{mbc}} criterion should be favored over the \eqn{BIC_{mbc}} criterion, as the \eqn{BIC_{mbc}} criterion tends to overestimate the number of clusters. The \eqn{BIC_{mbc}} criterion is designed to choose the number of components in a mixture model rather than the number of clusters.
+
 \emph{Warning}: It is not certain whether it is appropriate to use the model selection criterion above to select \code{D}.
 }
 \examples{
@@ -178,15 +180,15 @@ res <- JANE::JANE(A = sim_data$A,
                   DA_type = "none")
                   
 # Run JANE on simulated data - parallel with 5 cores
-future::plan(future::multisession, workers = 5)
-res <- JANE::JANE(A = sim_data$A,
-                  D = 2L,
-                  K = 3L,
-                  initialization = "GNN", 
-                  model = "NDH",
-                  case_control = FALSE,
-                  DA_type = "none")
-future::plan(future::sequential)
+# future::plan(future::multisession, workers = 5)
+# res <- JANE::JANE(A = sim_data$A,
+#                   D = 2L,
+#                   K = 3L,
+#                   initialization = "GNN", 
+#                   model = "NDH",
+#                   case_control = FALSE,
+#                   DA_type = "none")
+# future::plan(future::sequential)
 
 # Run JANE on simulated data - case/control approach with 20 controls sampled for each actor
 res <- JANE::JANE(A = sim_data$A,

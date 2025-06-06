@@ -1,0 +1,13 @@
+
+citHeader("To cite the 'JANE' R package in publications, please use:")
+
+bibentry(
+  bibtype  = "Article",
+  title = "JANE: Just Another latent space NEtwork clustering algorithm",
+  author = c(person(given=c("Alan", "T."), family="Arakkal"),
+             person(given=c("Daniel", "K."), family="Sewell")),
+  journal = "Computational Statistics & Data Analysis",
+  year = 2025,
+  volume = 211,
+  doi = "10.1016/j.csda.2025.108228"
+)

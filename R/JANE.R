@@ -42,7 +42,7 @@
 #' \item{\code{optimal_starting}}{ A list containing the starting parameters used in the EM algorithm that resulted in the optimal fit selected. It is recommended to use \code{summary()} to extract the parameters of interest. See \code{\link[JANE]{summary.JANE}} for more details.}
 #' @details
 #' 
-#' Isolates are removed from the adjacency matrix A. If an unsymmetric adjacency matrix A is supplied for \code{model %in% c('NDH', 'RS')} the user will be asked if they would like to proceed with converting A to a symmetric matrix (i.e., \code{A <- 1.0 * ( (A + t(A)) > 0.0 )}). Additionally, if a weighted network is supplied and \code{noise_weights = FALSE}, then the network will be converted to an unweighted binary network (i.e., (A > 0.0)*1.0) and a latent space cluster model is fit.
+#' Isolates are removed from the adjacency matrix A. If an unsymmetric adjacency matrix A is supplied for \code{model %in% c('NDH', 'RS')} the user will be asked if they would like to proceed with converting A to a symmetric matrix (i.e., \code{A <- 1.0 * ( (A + t(A)) > 0.0 )}); only able to do so if \code{family = 'bernoulli'}. Additionally, if a weighted network is supplied and \code{noise_weights = FALSE}, then the network will be converted to an unweighted binary network (i.e., (A > 0.0)*1.0) and a latent space cluster model is fit.
 #'  
 #' \strong{\code{control}:}
 #' 
@@ -100,6 +100,8 @@
 #'      \item{\code{'Total_ICL'}: (default) sum of \code{'BIC_model'} and \code{'ICL_mbc'}, this criterion is similar to \code{'Total_BIC'}, but uses ICL for the model based clustering component, which tends to favor more well-separated clusters.}
 #'}
 #' 
+#' Based on simulation studies, Biernacki et al. (2000) recommends that when the interest in mixture modeling is cluster analysis, instead of density estimation, the \eqn{ICL_{mbc}} criterion should be favored over the \eqn{BIC_{mbc}} criterion, as the \eqn{BIC_{mbc}} criterion tends to overestimate the number of clusters. The \eqn{BIC_{mbc}} criterion is designed to choose the number of components in a mixture model rather than the number of clusters.
+#' 
 #' \emph{Warning}: It is not certain whether it is appropriate to use the model selection criterion above to select \code{D}.
 #' 
 #' @references
@@ -149,15 +151,15 @@
 #'                   DA_type = "none")
 #'                   
 #' # Run JANE on simulated data - parallel with 5 cores
-#' future::plan(future::multisession, workers = 5)
-#' res <- JANE::JANE(A = sim_data$A,
-#'                   D = 2L,
-#'                   K = 3L,
-#'                   initialization = "GNN", 
-#'                   model = "NDH",
-#'                   case_control = FALSE,
-#'                   DA_type = "none")
-#' future::plan(future::sequential)
+#' # future::plan(future::multisession, workers = 5)
+#' # res <- JANE::JANE(A = sim_data$A,
+#' #                   D = 2L,
+#' #                   K = 3L,
+#' #                   initialization = "GNN", 
+#' #                   model = "NDH",
+#' #                   case_control = FALSE,
+#' #                   DA_type = "none")
+#' # future::plan(future::sequential)
 #' 
 #' # Run JANE on simulated data - case/control approach with 20 controls sampled for each actor
 #' res <- JANE::JANE(A = sim_data$A,
@@ -317,19 +319,6 @@ JANE <- function(A,
     cl$model <- eval(model)
   }
   
-  # If unsymmetric A provided for model = "NDH" or "RS" convert to symmetric A and warn
-  if(!isSymmetric(A) & (model %in% c("NDH", "RS"))){
-    input <- utils::menu(c("Yes", "No"), 
-                         title = paste0("Unsymmetric A matrix supplied for model = ",
-                                        model, ", do you want to convert A to a symmetric matrix?"))
-    if(input == 1){
-      A <- 1.0 * ( (A + t(A)) > 0.0 )
-      message("Converting A to symmetric matrix")
-    } else {
-      stop("A needs to be symmetric for model = ", model)
-    }
-  }
-  
   # Check family input
   if(!family %in% c("bernoulli", "lognormal", "poisson")){
     stop("family needs to be one of the following: 'bernoulli', 'lognormal', 'poisson'")
@@ -370,6 +359,25 @@ JANE <- function(A,
     A <- 1.0 * ( A > 0.0 )
     family <- "bernoulli"
     message("noise_weights == FALSE & family %in% c('lognormal', 'poisson'), converting A to unweighted matrix and fitting latent space cluster model assuming no noise weights and family = 'bernoulli'")
+  }
+  
+  # If unsymmetric A provided for model = "NDH" or "RS" convert to symmetric A and warn
+  if(!isSymmetric(A) & (model %in% c("NDH", "RS"))){
+    
+    if(family == "bernoulli"){
+      input <- utils::menu(c("Yes", "No"), 
+                           title = paste0("Unsymmetric A matrix supplied for model = ",
+                                          model, ", do you want to convert A to a symmetric matrix?"))
+      if(input == 1){
+        A <- 1.0 * ( (A + t(A)) > 0.0 )
+        message("Converting A to symmetric matrix")
+      } else {
+        stop("A needs to be symmetric for model = ", model)
+      }
+    } else {
+      stop("A needs to be symmetric for model = ", model, " and family = ", family)
+    }
+    
   }
   
   # Check guess_noise_weights
@@ -601,6 +609,7 @@ JANE <- function(A,
       p <- progressr::progressor(steps = nrow(combinations_2run))
       parallel_res <- future.apply::future_lapply(X = 1:nrow(combinations_2run), 
                                                   FUN = function(x){
+                                                    suppressWarnings(suppressPackageStartupMessages(library(JANE)))
                                                     out <- inner_parallel(x = x,
                                                                           call_def = cl,
                                                                           A = A)
@@ -608,7 +617,6 @@ JANE <- function(A,
                                                     return(out)
                                                   },
                                                   future.globals = FALSE,
-                                                  future.packages = "JANE",
                                                   future.seed = ifelse(is.null(seed), TRUE, seed))
     })
     
@@ -617,13 +625,13 @@ JANE <- function(A,
     progressr::with_progress({
       parallel_res <- future.apply::future_lapply(X = 1:nrow(combinations_2run), 
                                                   FUN = function(x){
+                                                    suppressWarnings(suppressPackageStartupMessages(library(JANE)))
                                                     out <- inner_parallel(x = x,
                                                                           call_def = cl,
                                                                           A = A)
                                                     return(out)
                                                   },
                                                   future.globals = FALSE,
-                                                  future.packages = "JANE",
                                                   future.seed = ifelse(is.null(seed), TRUE, seed))
     })
     
