@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>JANE User Guide</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">JANE User Guide</h1>
+<h3 class="subtitle">JANE Package Version 2.0.0</h3>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#description" id="toc-description"><span class="toc-section-number">1</span> Description</a></li>
+<li><a href="#features" id="toc-features"><span class="toc-section-number">2</span> Features</a></li>
+<li><a href="#getting-started" id="toc-getting-started"><span class="toc-section-number">3</span> Getting Started</a>
+<ul>
+<li><a href="#installation" id="toc-installation"><span class="toc-section-number">3.1</span> Installation</a></li>
+<li><a href="#documentation" id="toc-documentation"><span class="toc-section-number">3.2</span> Documentation</a></li>
+</ul></li>
+<li><a href="#fitting-jane-on-networks-without-noise-edges" id="toc-fitting-jane-on-networks-without-noise-edges"><span class="toc-section-number">4</span> Fitting <strong>JANE</strong> on
+networks <em>without</em> noise edges</a>
+<ul>
+<li><a href="#available-models" id="toc-available-models"><span class="toc-section-number">4.1</span> Available models</a></li>
+</ul></li>
+<li><a href="#fitting-jane-on-networks-with-noise-edges" id="toc-fitting-jane-on-networks-with-noise-edges"><span class="toc-section-number">5</span> Fitting <strong>JANE</strong> on
+networks <em>with</em> noise edges</a>
+<ul>
+<li><a href="#available-models-1" id="toc-available-models-1"><span class="toc-section-number">5.1</span> Available models</a></li>
+<li><a href="#guess_noise_weights" id="toc-guess_noise_weights"><span class="toc-section-number">5.2</span>
+<code>guess_noise_weights</code></a></li>
+</ul></li>
+<li><a href="#simulating-networks" id="toc-simulating-networks"><span class="toc-section-number">6</span> Simulating networks</a></li>
+<li><a href="#model-selection-criteria-for-choosing-the-number-of-clusters" id="toc-model-selection-criteria-for-choosing-the-number-of-clusters"><span class="toc-section-number">7</span> Model selection criteria for
+choosing the number of clusters</a></li>
+<li><a href="#initialization-of-em-algorithm" id="toc-initialization-of-em-algorithm"><span class="toc-section-number">8</span> Initialization of EM
+algorithm</a></li>
+<li><a href="#specification-of-prior-hyperparameters" id="toc-specification-of-prior-hyperparameters"><span class="toc-section-number">9</span> Specification of prior
+hyperparameters</a>
+<ul>
+<li><a href="#prior-distributions" id="toc-prior-distributions"><span class="toc-section-number">9.1</span> Prior distributions</a></li>
+<li><a href="#example-of-specifying-hyperparameters-for-a-single-combination-of-k-and-d" id="toc-example-of-specifying-hyperparameters-for-a-single-combination-of-k-and-d"><span class="toc-section-number">9.2</span> Example of specifying
+hyperparameters for a single combination of <span class="math inline">\(K\)</span> and <span class="math inline">\(D\)</span></a></li>
+<li><a href="#example-of-specifying-hyperparameters-for-multiple-combinations-of-k-and-d" id="toc-example-of-specifying-hyperparameters-for-multiple-combinations-of-k-and-d"><span class="toc-section-number">9.3</span> Example of specifying
+hyperparameters for multiple combinations of <span class="math inline">\(K\)</span> and <span class="math inline">\(D\)</span></a></li>
+</ul></li>
+<li><a href="#parallel-implementation-of-jane" id="toc-parallel-implementation-of-jane"><span class="toc-section-number">10</span> Parallel implementation of
+<code>JANE()</code></a></li>
+<li><a href="#case-control-implementation-of-jane" id="toc-case-control-implementation-of-jane"><span class="toc-section-number">11</span> Case-control implementation of
+<code>JANE()</code></a></li>
+<li><a href="#using-s3-methods-with-jane-objects" id="toc-using-s3-methods-with-jane-objects"><span class="toc-section-number">12</span> Using S3 methods with
+<strong>JANE</strong> objects</a>
+<ul>
+<li><a href="#print" id="toc-print"><span class="toc-section-number">12.1</span> <code>print()</code></a></li>
+<li><a href="#summary" id="toc-summary"><span class="toc-section-number">12.2</span> <code>summary()</code></a></li>
+<li><a href="#plot" id="toc-plot"><span class="toc-section-number">12.3</span> <code>plot()</code></a></li>
+</ul></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div id="description" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Description</h1>
+<p><strong>JANE</strong> is an R package for fitting latent space
+network cluster models using an expectation-maximization (EM) algorithm.
+It enables flexible modeling of unweighted or weighted network data,
+with or without noise edges, and supports both directed and undirected
+networks, with or without degree and strength heterogeneity. Designed to
+efficiently handle large networks, <strong>JANE</strong> allows users to
+explore latent structure, identify actor-centric communities, and
+simulate networks with customizable clustering and connectivity
+patterns.</p>
+<p>Details on the methodology underlying the package can be found in
+<span class="citation">Arakkal and Sewell (2025)</span>.</p>
+</div>
+<div id="features" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Features</h1>
+<ul>
+<li>Fine-tuned algorithm for fast and accurate actor-centric clustering
+using latent space models</li>
+<li>Supports both weighted and unweighted networks, with or without
+noisy edges</li>
+<li>Allows for modeling of discrete and continuous edge weights</li>
+<li>Multiple initialization strategies for the EM algorithm, including
+random initialization, a novel graphical neural network initialization,
+and user-specified values</li>
+<li>Customizable prior hyperparameter specification</li>
+<li>Supports parallel implementation for faster inference using the
+<strong>future</strong> and <strong>future.apply</strong> packages <span class="citation">(Bengtsson 2021)</span></li>
+<li>Supports case-control likelihood approximation for scalable
+inference <span class="citation">(Raftery et al. 2012)</span></li>
+<li>Built-in visualization and summary tools</li>
+</ul>
+</div>
+<div id="getting-started" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Getting Started</h1>
+<div id="installation" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Installation</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Current release from CRAN</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;JANE&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># Development version from GitHub</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;a1arakkal/JANE&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># Development version with vignettes</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;a1arakkal/JANE&quot;</span>, <span class="at">build_vignettes =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="documentation" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Documentation</h2>
+<p>Once installed, you can load the package and access its help
+documentation using the following commands:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Load JANE</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(JANE)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># Vignette</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">RShowDoc</span>(<span class="st">&quot;JANE-User-Guide&quot;</span>, <span class="at">package =</span> <span class="st">&quot;JANE&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="fitting-jane-on-networks-without-noise-edges" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Fitting
+<strong>JANE</strong> on networks <em>without</em> noise edges</h1>
+<p>When the <code>noise_weights</code> argument in <code>JANE()</code>
+is set to <code>FALSE</code> (default), a standard latent space cluster
+model is fit to the supplied <em>unweighted</em> network.</p>
+<div id="available-models" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Available models</h2>
+<div id="model-ndh" class="section level3" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span>
+<code>model = &quot;NDH&quot;</code></h3>
+<p>Applicable for undirected networks and assumes no degree
+heterogeneity. However, in real-world networks, it is rare to find no
+degree heterogeneity, as most networks exhibit considerable variation in
+node connectivity. Below is an example that fits an NDH model,
+specifying the dimension of the latent space as 2 and the number of
+clusters as 3.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">3</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;NDH&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+<div id="model-rs" class="section level3" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span>
+<code>model = &quot;RS&quot;</code></h3>
+<p>Applicable for undirected networks and adjusts for degree
+heterogeneity through the inclusion of actor-specific sociality effects.
+Below is an example that fits an RS model, where the number of clusters
+is specified to be 3 and a range of dimensions between 2 and 5 for the
+latent space is considered.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">3</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+<div id="model-rsr" class="section level3" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span>
+<code>model = &quot;RSR&quot;</code></h3>
+<p>Applicable for directed networks and adjusts for degree heterogeneity
+through the inclusion of actor-specific sender and receiver effects.
+Below is an example that fits an RSR model, where a range of cluster
+numbers between 2 and 10 and a range of dimensions between 2 and 5 for
+the latent space is considered.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="fitting-jane-on-networks-with-noise-edges" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Fitting
+<strong>JANE</strong> on networks <em>with</em> noise edges</h1>
+<p>With <code>JANE()</code>, <em>weighted</em> networks are particularly
+useful in settings where noise edges are present. In such settings, when
+the <code>noise_weights</code> argument in <code>JANE()</code> is set to
+<code>TRUE</code>, a latent space hurdle model (LSHM) is fit. The LSHM
+leverages information from both the propensity to form an edge and the
+observed edge weights to probabilistically down-weight noisy edges,
+while preserving edges that are structurally meaningful, subsequently
+enhancing community detection.</p>
+<p>If the supplied network is a weighted network, in the absence of
+noise it can be shown that the latent positions, regression parameters
+associated with the logistic regression model, finite mixture model
+parameters, and actor-specific cluster membership probabilities can all
+be estimated separately from the generalized linear model parameters for
+the edge weights. <strong>Thus, when <code>noise_weights = FALSE</code>,
+<code>JANE()</code> will simply dichotomize the supplied weighted
+network based on a threshold value of 0 and fit a standard latent space
+cluster model</strong>.</p>
+<div id="available-models-1" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Available models</h2>
+<p>You can fit the <code>&quot;NDH&quot;</code>, <code>&quot;RS&quot;</code>, or
+<code>&quot;RSR&quot;</code> models using any of the supported weight
+distributions described below. When working with weighted networks, the
+<code>&quot;RS&quot;</code> and <code>&quot;RSR&quot;</code> models account not only for
+degree heterogeneity but also for strength heterogeneity.</p>
+<div id="family-poisson" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span>
+<code>family = &quot;poisson&quot;</code></h3>
+<p>Use this option for count-weighted networks. This setting models
+observed edge weights using a zero-truncated Poisson (ZTP)
+distribution:</p>
+<ul>
+<li>Signal edge weights are modeled with a ZTP using a log link</li>
+<li>Noise edge weights are modeled with a ZTP using a fixed
+user-specified mean via the <code>guess_noise_weights</code>
+argument</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">5</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>     <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>     <span class="at">guess_noise_weights =</span> <span class="dv">1</span><span class="dt">L</span>)</span></code></pre></div>
+</div>
+<div id="family-lognormal" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span>
+<code>family = &quot;lognormal&quot;</code></h3>
+<p>Use this option when edge weights are positive, continuous values.
+This setting models observed edge weights using a log-normal
+distribution:</p>
+<ul>
+<li>Signal edges are modeled using a log-normal distribution with an
+identity link</li>
+<li>Noise edge weights are modeled using a log-normal distribution with
+a user-specified log-scale mean via the <code>guess_noise_weights</code>
+argument</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">5</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>     <span class="at">family =</span> <span class="st">&quot;lognormal&quot;</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>     <span class="at">guess_noise_weights =</span> <span class="sc">-</span><span class="fl">3.5</span>) <span class="co"># log-scale mean</span></span></code></pre></div>
+</div>
+<div id="family-bernoulli-default" class="section level3" number="5.1.3">
+<h3><span class="header-section-number">5.1.3</span>
+<code>family = &quot;bernoulli&quot;</code> (default)</h3>
+<p>This setting is used for unweighted (binary) networks. In this
+case:</p>
+<ul>
+<li>Signal and noise edges share the same observed weight (i.e., 1), so
+only the edge propensity model is used to identify and down-weight
+likely noise edges</li>
+<li><code>guess_noise_weights</code> is interpreted as the expected
+proportion of all edges that are likely to be noise</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">5</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>     <span class="at">family =</span> <span class="st">&quot;bernoulli&quot;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>     <span class="at">guess_noise_weights =</span> <span class="fl">0.2</span>) <span class="co"># expected noise edge proportion</span></span></code></pre></div>
+</div>
+</div>
+<div id="guess_noise_weights" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span>
+<code>guess_noise_weights</code></h2>
+<p>If guess_noise_weights is left as NULL (the default),
+<code>JANE()</code> will automatically set this value based on the
+<code>family</code> argument:</p>
+<ul>
+<li>For <code>family %in% c(&quot;lognormal&quot;, &quot;poisson&quot;)</code>, the 1st
+percentile of the non-zero edge weights is used (log-transformed weights
+for <code>lognormal</code>)</li>
+<li>For <code>family = &quot;bernoulli&quot;</code>, a default value of 0.01
+(i.e., 1%) is used, representing the assumed proportion of noisy
+edges</li>
+</ul>
+</div>
+</div>
+<div id="simulating-networks" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Simulating
+networks</h1>
+<p><strong>JANE</strong> includes a built-in function,
+<code>sim_A()</code>, for simulating networks with varying clustering
+and connectivity patterns. The function returns a list, which includes
+the following two components:</p>
+<ul>
+<li><code>A</code>: A sparse adjacency matrix of class ‘dgCMatrix’
+representing the “true” underlying unweighted network with no noise
+edges</li>
+<li><code>W</code>: A sparse adjacency matrix of class ‘dgCMatrix’
+representing the unweighted or weighted network, with or without noise
+edges</li>
+</ul>
+<p>The relationship between <code>A</code> and <code>W</code> depends on
+the values specified for <code>family</code> and
+<code>noise_weights_prob</code>:</p>
+<ul>
+<li>If <code>family = &quot;bernoulli&quot;</code> and
+<code>noise_weights_prob = 0</code>, then <code>A</code> and
+<code>W</code> are identical (i.e., no noise simulated)</li>
+<li>If <code>family = &quot;bernoulli&quot;</code> and
+<code>noise_weights_prob &gt; 0</code>, then <code>W</code> contains
+added noise edges, while <code>A</code> represents the noise-free
+underlying network</li>
+<li>If <code>family %in% c(&quot;poisson&quot;, &quot;lognormal&quot;)</code> and
+<code>noise_weights_prob = 0</code>, then <code>W</code> contains
+continuous or count-valued edge weights, but dichotomizing
+<code>W</code> at 0 will reproduce <code>A</code></li>
+<li>If <code>family %in% c(&quot;poisson&quot;, &quot;lognormal&quot;)</code> and
+<code>noise_weights_prob &gt; 0</code>, then <code>W</code> is a noisy,
+weighted network with additional spurious edges, and <code>A</code>
+remains the true underlying structure</li>
+</ul>
+<p>Below is an example to simulate an unweighted, undirected, noise-free
+network with a 2-dimensional latent space and 3 clusters, assuming no
+degree heterogeneity.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Specify the 3 x 2 matrix containing the 1 x 2 mean vectors of the 3 bivariate normals</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>mus <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,  <span class="co"># Mean vector 1</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>                 <span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,  <span class="co"># Mean vector 2</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>                 <span class="dv">1</span>, <span class="dv">1</span>), <span class="co"># Mean vector 3</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>              <span class="at">nrow =</span> <span class="dv">3</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">2</span>, </span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>              <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># Specify the 2 x 2 x 3 array containing the 2 x 2 precision matrices of the 3 bivariate normals</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>omegas <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">c</span>(<span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>)),  <span class="co"># Precision matrix 1</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>                  <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>)),  <span class="co"># Precision matrix 2</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>                  <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>))), <span class="co"># Precision matrix 3</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>                  <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>))</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co"># Simulate a network</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="fu">sim_A</span>(<span class="at">N =</span> <span class="dv">100</span><span class="dt">L</span>, </span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>      <span class="at">model =</span> <span class="st">&quot;NDH&quot;</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>      <span class="at">mus =</span> mus, </span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>      <span class="at">omegas =</span> omegas, </span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>      <span class="at">p =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">3</span>), </span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>      <span class="at">params_LR =</span> <span class="fu">list</span>(<span class="at">beta0 =</span> <span class="fl">1.0</span>),</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>      <span class="at">remove_isolates =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The parameter <code>beta0</code> above can be tuned to achieve a
+desired network density:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Specify the 3 x 2 matrix containing the 1 x 2 mean vectors of the 3 bivariate normals</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>mus <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,  <span class="co"># Mean vector 1</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>                 <span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,  <span class="co"># Mean vector 2</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>                 <span class="dv">1</span>, <span class="dv">1</span>), <span class="co"># Mean vector 3</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>              <span class="at">nrow =</span> <span class="dv">3</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">2</span>, </span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>              <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co"># Specify the 2 x 2 x 3 array containing the 2 x 2 precision matrices of the 3 bivariate normals</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>omegas <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">c</span>(<span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>)),  <span class="co"># Precision matrix 1</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>                  <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>)),  <span class="co"># Precision matrix 2</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>                  <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>))), <span class="co"># Precision matrix 3</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>                  <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>))</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>desired_density <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="co"># Target network density</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>min_density <span class="ot">&lt;-</span> desired_density <span class="sc">*</span> <span class="fl">0.99</span>  <span class="co"># Lower bound for acceptable density</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>max_density <span class="ot">&lt;-</span> desired_density <span class="sc">*</span> <span class="fl">1.01</span>  <span class="co"># Upper bound for acceptable density</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>n_act <span class="ot">&lt;-</span> <span class="dv">100</span><span class="dt">L</span> <span class="co"># Number of actors in the network</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>density <span class="ot">&lt;-</span> <span class="cn">Inf</span> <span class="co"># Initialize density to enter while loop</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="co"># Initial value for intercept parameter</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>n_while_loop <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Counter for outer loop iterations</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a>max_its <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># Maximum number of iterations</span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a>change_beta0 <span class="ot">&lt;-</span> <span class="fl">0.1</span>  <span class="co"># Amount to adjust beta0 by</span></span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a><span class="co"># Adjust beta0 until simulated network has the approximate desired density</span></span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a><span class="cf">while</span>(<span class="sc">!</span> (density <span class="sc">&gt;=</span> min_density <span class="sc">&amp;</span> density <span class="sc">&lt;=</span> max_density) ){</span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a>  </span>
+<span id="cb10-29"><a href="#cb10-29" tabindex="-1"></a>  <span class="cf">if</span>(n_while_loop<span class="sc">&gt;</span>max_its){</span>
+<span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a>    <span class="cf">break</span></span>
+<span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a>  }</span>
+<span id="cb10-32"><a href="#cb10-32" tabindex="-1"></a>  </span>
+<span id="cb10-33"><a href="#cb10-33" tabindex="-1"></a>  n_retry_isolate <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb10-34"><a href="#cb10-34" tabindex="-1"></a>  retry_isolate <span class="ot">&lt;-</span> T</span>
+<span id="cb10-35"><a href="#cb10-35" tabindex="-1"></a>  </span>
+<span id="cb10-36"><a href="#cb10-36" tabindex="-1"></a>  <span class="co"># Retry until a network with no isolates is generated (this while loop is optional)</span></span>
+<span id="cb10-37"><a href="#cb10-37" tabindex="-1"></a>  <span class="cf">while</span>(retry_isolate){</span>
+<span id="cb10-38"><a href="#cb10-38" tabindex="-1"></a>    </span>
+<span id="cb10-39"><a href="#cb10-39" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">sim_A</span>(<span class="at">N =</span> n_act, </span>
+<span id="cb10-40"><a href="#cb10-40" tabindex="-1"></a>                      <span class="at">model =</span> <span class="st">&quot;NDH&quot;</span>,</span>
+<span id="cb10-41"><a href="#cb10-41" tabindex="-1"></a>                      <span class="at">mus =</span> mus, </span>
+<span id="cb10-42"><a href="#cb10-42" tabindex="-1"></a>                      <span class="at">omegas =</span> omegas, </span>
+<span id="cb10-43"><a href="#cb10-43" tabindex="-1"></a>                      <span class="at">p =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">3</span>), </span>
+<span id="cb10-44"><a href="#cb10-44" tabindex="-1"></a>                      <span class="at">params_LR =</span> <span class="fu">list</span>(<span class="at">beta0 =</span> beta0),</span>
+<span id="cb10-45"><a href="#cb10-45" tabindex="-1"></a>                      <span class="at">remove_isolates =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-46"><a href="#cb10-46" tabindex="-1"></a>    </span>
+<span id="cb10-47"><a href="#cb10-47" tabindex="-1"></a>    n_retry_isolate <span class="ot">&lt;-</span> n_retry_isolate <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb10-48"><a href="#cb10-48" tabindex="-1"></a>    </span>
+<span id="cb10-49"><a href="#cb10-49" tabindex="-1"></a>    <span class="co"># Accept network if no isolates remain, or if retried more than 10 times at the same beta0</span></span>
+<span id="cb10-50"><a href="#cb10-50" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">nrow</span>(sim_data<span class="sc">$</span>A) <span class="sc">==</span> n_act <span class="sc">|</span> n_retry_isolate<span class="sc">&gt;</span><span class="dv">10</span>){</span>
+<span id="cb10-51"><a href="#cb10-51" tabindex="-1"></a>      retry_isolate <span class="ot">&lt;-</span> F</span>
+<span id="cb10-52"><a href="#cb10-52" tabindex="-1"></a>    }</span>
+<span id="cb10-53"><a href="#cb10-53" tabindex="-1"></a>    </span>
+<span id="cb10-54"><a href="#cb10-54" tabindex="-1"></a>  }</span>
+<span id="cb10-55"><a href="#cb10-55" tabindex="-1"></a>  </span>
+<span id="cb10-56"><a href="#cb10-56" tabindex="-1"></a>  <span class="co"># Compute network density</span></span>
+<span id="cb10-57"><a href="#cb10-57" tabindex="-1"></a>  density <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">graph.density</span>(</span>
+<span id="cb10-58"><a href="#cb10-58" tabindex="-1"></a>    igraph<span class="sc">::</span><span class="fu">graph_from_adjacency_matrix</span>(sim_data<span class="sc">$</span>A, <span class="at">mode =</span> <span class="st">&quot;undirected&quot;</span>)</span>
+<span id="cb10-59"><a href="#cb10-59" tabindex="-1"></a>    )</span>
+<span id="cb10-60"><a href="#cb10-60" tabindex="-1"></a></span>
+<span id="cb10-61"><a href="#cb10-61" tabindex="-1"></a>  <span class="co"># Adjust beta0 based on density feedback</span></span>
+<span id="cb10-62"><a href="#cb10-62" tabindex="-1"></a>  <span class="cf">if</span> (density <span class="sc">&gt;</span> max_density)  {</span>
+<span id="cb10-63"><a href="#cb10-63" tabindex="-1"></a>    beta0 <span class="ot">&lt;-</span> beta0 <span class="sc">-</span> change_beta0</span>
+<span id="cb10-64"><a href="#cb10-64" tabindex="-1"></a>  }</span>
+<span id="cb10-65"><a href="#cb10-65" tabindex="-1"></a>  </span>
+<span id="cb10-66"><a href="#cb10-66" tabindex="-1"></a>  <span class="cf">if</span> (density <span class="sc">&lt;</span> min_density)  {</span>
+<span id="cb10-67"><a href="#cb10-67" tabindex="-1"></a>    beta0 <span class="ot">&lt;-</span> beta0 <span class="sc">+</span> change_beta0</span>
+<span id="cb10-68"><a href="#cb10-68" tabindex="-1"></a>  }</span>
+<span id="cb10-69"><a href="#cb10-69" tabindex="-1"></a>  </span>
+<span id="cb10-70"><a href="#cb10-70" tabindex="-1"></a>  n_while_loop <span class="ot">&lt;-</span> n_while_loop <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb10-71"><a href="#cb10-71" tabindex="-1"></a>  </span>
+<span id="cb10-72"><a href="#cb10-72" tabindex="-1"></a>}    </span>
+<span id="cb10-73"><a href="#cb10-73" tabindex="-1"></a></span>
+<span id="cb10-74"><a href="#cb10-74" tabindex="-1"></a>A <span class="ot">&lt;-</span> sim_data<span class="sc">$</span>A <span class="co"># Final simulated adjacency matrix</span></span>
+<span id="cb10-75"><a href="#cb10-75" tabindex="-1"></a>igraph<span class="sc">::</span><span class="fu">graph.density</span>(igraph<span class="sc">::</span><span class="fu">graph_from_adjacency_matrix</span>(A, <span class="at">mode =</span> <span class="st">&quot;undirected&quot;</span>)) <span class="co"># Verify density</span></span>
+<span id="cb10-76"><a href="#cb10-76" tabindex="-1"></a><span class="co">#&gt; [1] 0.1</span></span></code></pre></div>
+<p>Below is an example that simulates a directed, weighted network with
+noise, degree and strength heterogeneity, a 2-dimensional latent space,
+and 3 clusters.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Specify the 3 x 2 matrix containing the 1 x 2 mean vectors of the 3 bivariate normals</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>mus <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,  <span class="co"># Mean vector 1</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>                 <span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,  <span class="co"># Mean vector 2</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>                 <span class="dv">1</span>, <span class="dv">1</span>), <span class="co"># Mean vector 3</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>              <span class="at">nrow =</span> <span class="dv">3</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">2</span>, </span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>              <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co"># Specify the 2 x 2 x 3 array containing the 2 x 2 precision matrices of the 3 bivariate normals</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>omegas <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">c</span>(<span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>)),  <span class="co"># Precision matrix 1</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>                  <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>)),  <span class="co"># Precision matrix 2</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>                  <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">7</span>,<span class="dv">2</span>))), <span class="co"># Precision matrix 3</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>                  <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>))</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co"># Simulate a network</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="fu">sim_A</span>(<span class="at">N =</span> <span class="dv">100</span><span class="dt">L</span>, </span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>      <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>      <span class="at">mus =</span> mus, </span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>      <span class="at">omegas =</span> omegas, </span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a>      <span class="at">p =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">3</span>), </span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>      <span class="at">params_LR =</span> <span class="fu">list</span>(<span class="at">beta0 =</span> <span class="dv">1</span>),</span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>      <span class="at">params_weights =</span> <span class="fu">list</span>(<span class="at">beta0 =</span> <span class="dv">2</span>),</span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a>      <span class="at">noise_weights_prob =</span> <span class="fl">0.1</span>,</span>
+<span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a>      <span class="at">mean_noise_weights =</span> <span class="dv">1</span>,</span>
+<span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a>      <span class="at">remove_isolates =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="model-selection-criteria-for-choosing-the-number-of-clusters" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Model selection
+criteria for choosing the number of clusters</h1>
+<p><code>JANE()</code> allows for the following model selection criteria
+to choose the number of clusters and the best initialization of the EM
+algorithm (smaller values are favored):</p>
+<ul>
+<li><code>&quot;Total_BIC&quot;</code> (i.e., BIC): Sum of <span class="math inline">\(BIC_{model}\)</span> and <span class="math inline">\(BIC_{mbc}\)</span>, where <span class="math inline">\(BIC_{model}\)</span> is the BIC computed from
+logistic regression or Hurdle model component and <span class="math inline">\(BIC_{mbc}\)</span> is the BIC computed from model
+based clustering component. This is the model selection criterion
+proposed by <span class="citation">Handcock, Raftery, and Tantrum
+(2007)</span></li>
+<li><code>&quot;Total_ICL&quot;</code> (i.e., BICL): (default) sum of <span class="math inline">\(BIC_{model}\)</span> and <span class="math inline">\(ICL_{mbc}\)</span>, this criterion is similar to
+<code>&quot;Total_BIC&quot;</code>, but uses the integrated completed likelihood
+(ICL) for the model based clustering component, which tends to favor
+more well-separated clusters</li>
+</ul>
+<p>Based on simulation studies, <span class="citation">Biernacki,
+Celeux, and Govaert (2000)</span> recommends that when the interest in
+mixture modeling is cluster analysis, instead of density estimation, the
+<span class="math inline">\(ICL_{mbc}\)</span> criterion should be
+favored over the <span class="math inline">\(BIC_{mbc}\)</span>
+criterion, as the <span class="math inline">\(BIC_{mbc}\)</span>
+criterion tends to overestimate the number of clusters. The <span class="math inline">\(BIC_{mbc}\)</span> criterion is designed to choose
+the number of components in a mixture model rather than the number of
+clusters.</p>
+<p><strong><em>Warning</em></strong>: It is not certain whether it is
+appropriate to use the model selection criterion above to select the
+dimension of the latent space <span class="math inline">\(D\)</span>.</p>
+<p>Below is an example that fits an RSR model, where a range of cluster
+numbers between 2 and 10 is considered for a 2-dimensional latent space
+and <code>&quot;Total_BIC&quot;</code> is used to select the optimal number of
+clusters and best initialization of the EM algorithm.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">list</span>(<span class="at">IC_selection =</span> <span class="st">&quot;Total_BIC&quot;</span>))</span></code></pre></div>
+<p>Below is an example that fits an RSR model for a 2-dimensional latent
+space with 3 clusters and <code>&quot;Total_ICL&quot;</code> is used to select the
+optimal initialization of the EM algorithm from 10 unique starts. Note:
+the number of starts for the EM algorithm is controlled through the
+<code>control</code> argument by supplying a value for
+<code>n_start</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">3</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">list</span>(<span class="at">IC_selection =</span> <span class="st">&quot;Total_ICL&quot;</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>                    <span class="at">n_start =</span> <span class="dv">10</span>))</span></code></pre></div>
+</div>
+<div id="initialization-of-em-algorithm" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Initialization of EM
+algorithm</h1>
+<p><code>JANE()</code> has three initialization strategies to generate
+starting values for the EM algorithm, controlled through the
+<code>initialization</code> argument:</p>
+<ul>
+<li><code>&quot;GNN&quot;</code>: uses a type of graphical neural network approach
+to generate initial values (default). Details of the graphical neural
+network approach can be found in <span class="citation">Arakkal and
+Sewell (2025)</span></li>
+<li><code>&quot;random&quot;</code>: uses random initial values</li>
+<li>A user-supplied list of S3 class <code>&quot;JANE.initial_values&quot;</code>
+representing initial values for the EM algorithm. See
+<code>?specify_initial_values</code> for details on how to specify
+initial values</li>
+</ul>
+<p>Below is an example where starting values are supplied to
+<code>JANE()</code> using <code>specify_initial_values()</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Specify starting values</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">nrow</span>(sim_data<span class="sc">$</span>A)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>n_interior_knots <span class="ot">&lt;-</span> <span class="dv">5</span><span class="dt">L</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(N<span class="sc">*</span>D), <span class="at">nrow =</span> N, <span class="at">ncol =</span> D)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>omegas <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rWishart</span>(<span class="at">n =</span> K, <span class="at">df =</span> D<span class="sc">+</span><span class="dv">1</span>, <span class="at">Sigma =</span> <span class="fu">diag</span>(D))</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>mus <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>D), <span class="at">nrow =</span> K, <span class="at">ncol =</span> D)</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>p <span class="ot">&lt;-</span> extraDistr<span class="sc">::</span><span class="fu">rdirichlet</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="fu">rep</span>(<span class="dv">3</span>,K))[<span class="dv">1</span>,]</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>Z <span class="ot">&lt;-</span>  extraDistr<span class="sc">::</span><span class="fu">rdirichlet</span>(<span class="at">n =</span> N, <span class="at">alpha =</span> <span class="fu">rep</span>(<span class="dv">1</span>, K))</span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>beta <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>(<span class="dv">1</span> <span class="sc">+</span> n_interior_knots))</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>my_starting_values <span class="ot">&lt;-</span> <span class="fu">specify_initial_values</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>                                             <span class="at">D =</span> D,</span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>                                             <span class="at">K =</span> K,</span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>                                             <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>                                             <span class="at">n_interior_knots =</span> n_interior_knots,</span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a>                                             <span class="at">U =</span> U,</span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>                                             <span class="at">omegas =</span> omegas, </span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>                                             <span class="at">mus =</span> mus, </span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a>                                             <span class="at">p =</span> p, </span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a>                                             <span class="at">Z =</span> Z,</span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a>                                             <span class="at">beta =</span> beta)         </span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co"># Run JANE using my_starting_values (no need to specify D and K as function will </span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co"># determine those values from my_starting_values)</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a>     <span class="at">initialization =</span> my_starting_values,</span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+<div id="specification-of-prior-hyperparameters" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Specification of prior
+hyperparameters</h1>
+<div id="prior-distributions" class="section level2" number="9.1">
+<h2><span class="header-section-number">9.1</span> Prior
+distributions</h2>
+<p>The prior distributions are specified as follows:</p>
+<div id="prior-on-boldsymbolmu_k-and-boldsymbolomega_k" class="section level3" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> Prior on <span class="math inline">\(\boldsymbol{\mu}_k\)</span> and <span class="math inline">\(\boldsymbol{\Omega}_k\)</span></h3>
+<p>The same prior is used for <span class="math inline">\(k = 1, \ldots,
+K\)</span>:</p>
+<p><span class="math display">\[
+\boldsymbol{\Omega}_k \sim \text{Wishart}(c, \boldsymbol{G}^{-1})
+\]</span></p>
+<p><span class="math display">\[
+\boldsymbol{\mu}_k \mid \boldsymbol{\Omega}_k \sim
+\text{MVN}(\boldsymbol{a}, (b \boldsymbol{\Omega}_k)^{-1})
+\]</span></p>
+</div>
+<div id="prior-on-boldsymbolp" class="section level3" number="9.1.2">
+<h3><span class="header-section-number">9.1.2</span> Prior on <span class="math inline">\(\boldsymbol{p}\)</span></h3>
+<p>For the current implementation, we require that all elements of the
+<code>nu</code> vector be <span class="math inline">\(\geq 1\)</span> to
+prevent negative mixture weights for empty clusters:</p>
+<p><span class="math display">\[
+\boldsymbol{p} \sim \text{Dirichlet}(\nu_1, \ldots, \nu_K)
+\]</span></p>
+</div>
+<div id="prior-on-boldsymbolbeta_lr" class="section level3" number="9.1.3">
+<h3><span class="header-section-number">9.1.3</span> Prior on <span class="math inline">\(\boldsymbol{\beta}_{LR}\)</span></h3>
+<p><span class="math display">\[
+\boldsymbol{\beta}_{LR} \sim \text{MVN}(\boldsymbol{e},
+\boldsymbol{F}^{-1})
+\]</span></p>
+</div>
+<div id="prior-on-q" class="section level3" number="9.1.4">
+<h3><span class="header-section-number">9.1.4</span> Prior on <span class="math inline">\(q\)</span></h3>
+<p><span class="math display">\[
+q \sim \text{Beta}(h, l)
+\]</span></p>
+</div>
+<div id="zero-truncated-poisson" class="section level3" number="9.1.5">
+<h3><span class="header-section-number">9.1.5</span> <em>Zero-truncated
+Poisson</em></h3>
+<div id="prior-on-boldsymbolbeta_glm" class="section level4" number="9.1.5.1">
+<h4><span class="header-section-number">9.1.5.1</span> Prior on <span class="math inline">\(\boldsymbol{\beta}_{GLM}\)</span></h4>
+<p><span class="math display">\[
+\boldsymbol{\beta}_{GLM} \sim \text{MVN}(\boldsymbol{e}_2,
+\boldsymbol{F}_2^{-1})
+\]</span></p>
+</div>
+</div>
+<div id="log-normal" class="section level3" number="9.1.6">
+<h3><span class="header-section-number">9.1.6</span>
+<em>Log-normal</em></h3>
+<div id="prior-on-tau2_textweights" class="section level4" number="9.1.6.1">
+<h4><span class="header-section-number">9.1.6.1</span> Prior on <span class="math inline">\(\tau^2_{\text{weights}}\)</span></h4>
+<p><span class="math display">\[
+\tau^2_{\text{weights}} \sim \text{Gamma}\left(\frac{m_1}{2},
+\frac{o_1}{2}\right)
+\]</span></p>
+</div>
+<div id="prior-on-boldsymbolbeta_glm-1" class="section level4" number="9.1.6.2">
+<h4><span class="header-section-number">9.1.6.2</span> Prior on <span class="math inline">\(\boldsymbol{\beta}_{GLM}\)</span></h4>
+<p><span class="math display">\[
+\boldsymbol{\beta}_{GLM} \mid \tau^2_{\text{weights}} \sim
+\text{MVN}\left(\boldsymbol{e}_2, (\tau^2_{\text{weights}}
+\boldsymbol{F}_2)^{-1}\right)
+\]</span></p>
+</div>
+<div id="prior-on-tau2_textnoise-weights" class="section level4" number="9.1.6.3">
+<h4><span class="header-section-number">9.1.6.3</span> Prior on <span class="math inline">\(\tau^2_{\text{noise weights}}\)</span></h4>
+<p><span class="math display">\[
+\tau^2_{\text{noise weights}} \sim \text{Gamma}\left(\frac{m_2}{2},
+\frac{o_2}{2}\right)
+\]</span></p>
+</div>
+</div>
+<div id="default-hyperparameters" class="section level3" number="9.1.7">
+<h3><span class="header-section-number">9.1.7</span> Default
+hyperparameters</h3>
+<ul>
+<li><span class="math inline">\(\boldsymbol{a} =
+\boldsymbol{0}_D\)</span></li>
+<li><span class="math inline">\(b = 1\)</span></li>
+<li><span class="math inline">\(c = D+1\)</span></li>
+<li><span class="math inline">\(\boldsymbol{e} =
+\boldsymbol{0}_{dim(\boldsymbol{\beta}_{LR})}\)</span></li>
+<li><span class="math inline">\(\boldsymbol{e}_2 =
+\boldsymbol{0}_{dim(\boldsymbol{\beta}_{GLM})}\)</span></li>
+<li><span class="math inline">\(\boldsymbol{F} = \text{Diag}(1/100,
+(1/2.5^2)\mathbf{1}_{dim(\boldsymbol{\beta}_{LR})-1})\)</span></li>
+<li><span class="math inline">\(\boldsymbol{F}_2 = \text{Diag}(1/100,
+(1/2.5^2)\mathbf{1}_{dim(\boldsymbol{\beta}_{GLM})-1})\)</span></li>
+<li><span class="math inline">\(\boldsymbol{G} =
+\mathbf{I}_D\)</span></li>
+<li><span class="math inline">\(h = l =1\)</span></li>
+<li><span class="math inline">\(m_1 = m_2 = o_1 = o_2 = 2\)</span></li>
+<li><span class="math inline">\(\boldsymbol{\nu} =
+3\mathbf{1}_{K}\)</span></li>
+</ul>
+<p>where, <span class="math inline">\(D\)</span> is the dimension of the
+latent space, <span class="math inline">\(K\)</span> is the number of
+clusters, <span class="math display">\[dim(\boldsymbol{\beta}_{LR}) =
+dim(\boldsymbol{\beta}_{GLM}) = \begin{cases}1 &amp;
+\text{&quot;NDH&#39;&#39;}\\ \zeta+2 &amp;  \text{&quot;RS&#39;&#39;} \\
+2\zeta+3 &amp; \text{&quot;RSR&#39;&#39;},\end{cases}\]</span> and <span class="math inline">\(\zeta\)</span> is the number of interior knots
+used in fitting a natural cubic spline for degree heterogeneity (and
+connection strength heterogeneity if working with weighted network)
+models (i.e., <code>&quot;RS&quot;</code> and <code>&quot;RSR&quot;</code> only).</p>
+</div>
+</div>
+<div id="example-of-specifying-hyperparameters-for-a-single-combination-of-k-and-d" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Example of specifying
+hyperparameters for a single combination of <span class="math inline">\(K\)</span> and <span class="math inline">\(D\)</span></h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Specify prior hyperparameters</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>n_interior_knots <span class="ot">&lt;-</span> <span class="dv">5</span><span class="dt">L</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, D)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">*</span><span class="fu">diag</span>(D)</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>nu <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">2</span>, K)</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.5</span>, <span class="dv">1</span> <span class="sc">+</span> (n_interior_knots <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fu">rep</span>(<span class="fl">0.5</span>, n_interior_knots <span class="sc">+</span> <span class="dv">1</span>)))</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>my_prior_hyperparameters <span class="ot">&lt;-</span> <span class="fu">specify_priors</span>(<span class="at">D =</span> D,</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>                                           <span class="at">K =</span> K,</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>                                           <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>                                           <span class="at">n_interior_knots =</span> n_interior_knots,</span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>                                           <span class="at">a =</span> a,</span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>                                           <span class="at">b =</span> b,</span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>                                           <span class="at">c =</span> c,</span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>                                           <span class="at">G =</span> G,</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a>                                           <span class="at">nu =</span> nu,</span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>                                           <span class="at">e =</span> e,</span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a>                                           <span class="at">f =</span> f)</span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a>                                           </span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a><span class="co"># Run JANE using supplied prior hyperparameters (no need to specify D and K </span></span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a><span class="co"># as function will determine those values from my_prior_hyperparameters)</span></span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a>     <span class="at">initialization =</span> <span class="st">&quot;GNN&quot;</span>,</span>
+<span id="cb15-29"><a href="#cb15-29" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb15-30"><a href="#cb15-30" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-31"><a href="#cb15-31" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">list</span>(<span class="at">priors =</span> my_prior_hyperparameters))</span></code></pre></div>
+</div>
+<div id="example-of-specifying-hyperparameters-for-multiple-combinations-of-k-and-d" class="section level2" number="9.3">
+<h2><span class="header-section-number">9.3</span> Example of specifying
+hyperparameters for multiple combinations of <span class="math inline">\(K\)</span> and <span class="math inline">\(D\)</span></h2>
+<div id="nested-list" class="section level3" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Nested list</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Specify first set of prior hyperparameters</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>n_interior_knots <span class="ot">&lt;-</span> <span class="dv">5</span><span class="dt">L</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, D)</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">*</span><span class="fu">diag</span>(D)</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>nu <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">2</span>, K)</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.5</span>, <span class="dv">1</span> <span class="sc">+</span> (n_interior_knots <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fu">rep</span>(<span class="fl">0.5</span>, n_interior_knots <span class="sc">+</span> <span class="dv">1</span>)))</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>my_prior_hyperparameters_1 <span class="ot">&lt;-</span> <span class="fu">specify_priors</span>(<span class="at">D =</span> D,</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>                                             <span class="at">K =</span> K,</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>                                             <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>                                             <span class="at">n_interior_knots =</span> n_interior_knots,</span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>                                             <span class="at">a =</span> a,</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>                                             <span class="at">b =</span> b,</span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>                                             <span class="at">c =</span> c,</span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>                                             <span class="at">G =</span> G,</span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a>                                             <span class="at">nu =</span> nu,</span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a>                                             <span class="at">e =</span> e,</span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>                                             <span class="at">f =</span> f)</span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a><span class="co"># Specify second set of prior hyperparameters</span></span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a>n_interior_knots <span class="ot">&lt;-</span> <span class="dv">5</span><span class="dt">L</span></span>
+<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, D)</span>
+<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">*</span><span class="fu">diag</span>(D)</span>
+<span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a>nu <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">2</span>, K)</span>
+<span id="cb16-34"><a href="#cb16-34" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.5</span>, <span class="dv">1</span> <span class="sc">+</span> (n_interior_knots <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb16-35"><a href="#cb16-35" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fu">rep</span>(<span class="fl">0.5</span>, n_interior_knots <span class="sc">+</span> <span class="dv">1</span>)))</span>
+<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a></span>
+<span id="cb16-37"><a href="#cb16-37" tabindex="-1"></a>my_prior_hyperparameters_2 <span class="ot">&lt;-</span> <span class="fu">specify_priors</span>(<span class="at">D =</span> D,</span>
+<span id="cb16-38"><a href="#cb16-38" tabindex="-1"></a>                                             <span class="at">K =</span> K,</span>
+<span id="cb16-39"><a href="#cb16-39" tabindex="-1"></a>                                             <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb16-40"><a href="#cb16-40" tabindex="-1"></a>                                             <span class="at">n_interior_knots =</span> n_interior_knots,</span>
+<span id="cb16-41"><a href="#cb16-41" tabindex="-1"></a>                                             <span class="at">a =</span> a,</span>
+<span id="cb16-42"><a href="#cb16-42" tabindex="-1"></a>                                             <span class="at">b =</span> b,</span>
+<span id="cb16-43"><a href="#cb16-43" tabindex="-1"></a>                                             <span class="at">c =</span> c,</span>
+<span id="cb16-44"><a href="#cb16-44" tabindex="-1"></a>                                             <span class="at">G =</span> G,</span>
+<span id="cb16-45"><a href="#cb16-45" tabindex="-1"></a>                                             <span class="at">nu =</span> nu,</span>
+<span id="cb16-46"><a href="#cb16-46" tabindex="-1"></a>                                             <span class="at">e =</span> e,</span>
+<span id="cb16-47"><a href="#cb16-47" tabindex="-1"></a>                                             <span class="at">f =</span> f)</span>
+<span id="cb16-48"><a href="#cb16-48" tabindex="-1"></a></span>
+<span id="cb16-49"><a href="#cb16-49" tabindex="-1"></a><span class="co"># Create nested list</span></span>
+<span id="cb16-50"><a href="#cb16-50" tabindex="-1"></a>my_prior_hyperparameters <span class="ot">&lt;-</span> <span class="fu">list</span>(my_prior_hyperparameters_1,</span>
+<span id="cb16-51"><a href="#cb16-51" tabindex="-1"></a>                                 my_prior_hyperparameters_2)</span>
+<span id="cb16-52"><a href="#cb16-52" tabindex="-1"></a></span>
+<span id="cb16-53"><a href="#cb16-53" tabindex="-1"></a><span class="co"># Run JANE using supplied prior hyperparameters (no need to specify D and K </span></span>
+<span id="cb16-54"><a href="#cb16-54" tabindex="-1"></a><span class="co"># as function will determine those values from my_prior_hyperparameters)</span></span>
+<span id="cb16-55"><a href="#cb16-55" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb16-56"><a href="#cb16-56" tabindex="-1"></a>     <span class="at">initialization =</span> <span class="st">&quot;GNN&quot;</span>,</span>
+<span id="cb16-57"><a href="#cb16-57" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb16-58"><a href="#cb16-58" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb16-59"><a href="#cb16-59" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">list</span>(<span class="at">priors =</span> my_prior_hyperparameters))</span></code></pre></div>
+</div>
+<div id="unevaluated-calls" class="section level3" number="9.3.2">
+<h3><span class="header-section-number">9.3.2</span> Unevaluated
+calls</h3>
+<p>Unevaluated calls using <code>quote()</code> can be supplied as
+values for specific hyperparameters. This is particularly useful when
+running <code>JANE()</code> for multiple combinations of <span class="math inline">\(K\)</span> and <span class="math inline">\(D\)</span>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Specify prior hyperparameters as unevaluated calls</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>n_interior_knots <span class="ot">&lt;-</span> <span class="dv">5</span><span class="dt">L</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.5</span>, <span class="dv">1</span> <span class="sc">+</span> (n_interior_knots <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fu">rep</span>(<span class="fl">0.5</span>, n_interior_knots <span class="sc">+</span> <span class="dv">1</span>)))</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>my_prior_hyperparameters <span class="ot">&lt;-</span> <span class="fu">specify_priors</span>(<span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>                                           <span class="at">n_interior_knots =</span> n_interior_knots,</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>                                           <span class="at">a =</span> <span class="fu">quote</span>(<span class="fu">rep</span>(<span class="dv">1</span>, D)),</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>                                           <span class="at">b =</span> b,</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>                                           <span class="at">c =</span> <span class="fu">quote</span>(D <span class="sc">+</span> <span class="dv">1</span>),</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>                                           <span class="at">G =</span> <span class="fu">quote</span>(<span class="dv">10</span><span class="sc">*</span><span class="fu">diag</span>(D)),</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>                                           <span class="at">nu =</span> <span class="fu">quote</span>(<span class="fu">rep</span>(<span class="dv">2</span>, K)),</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>                                           <span class="at">e =</span> e,</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>                                           <span class="at">f =</span> f)</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>                                           </span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co"># Run JANE using supplied prior hyperparameters</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>     <span class="at">initialization =</span> <span class="st">&quot;GNN&quot;</span>,</span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
+<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a>     <span class="at">noise_weights =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">list</span>(<span class="at">priors =</span> my_prior_hyperparameters))</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="parallel-implementation-of-jane" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Parallel
+implementation of <code>JANE()</code></h1>
+<p>You can speed up fitting models for multiple combinations of cluster
+number <code>K</code>, latent space dimension <code>D</code>, and number
+of initializations of the EM algorithm <code>n_start</code>, by running
+<code>JANE()</code> in parallel. This leverages the <code>future</code>
+and <code>future.apply</code> packages to distribute computation across
+cores.</p>
+<p>Below is an example using 5 parallel workers to run
+<code>JANE()</code> with parallel backend enabled, followed by resetting
+to sequential processing.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Set up parallel plan with 5 workers (cores)</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span>multisession, <span class="at">workers =</span> <span class="dv">5</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co"># Run JANE in parallel </span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>res_parallel <span class="ot">&lt;-</span> <span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>                     <span class="at">D =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>                     <span class="at">K =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>                     <span class="at">initialization =</span> <span class="st">&quot;GNN&quot;</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>                     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co"># Reset to sequential processing</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(future<span class="sc">::</span>sequential)</span></code></pre></div>
+</div>
+<div id="case-control-implementation-of-jane" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Case-control
+implementation of <code>JANE()</code></h1>
+<p>When working with large <em>sparse</em> networks, the case-control
+approximation implemented in <code>JANE()</code> can reduce
+computational cost. This approach leverages approximation methods
+developed by <span class="citation">Raftery et al. (2012)</span>. With
+the case-control implementation, the likelihood includes all edges
+(where most of the information lies) but uses a Monte Carlo
+approximation of terms involving the unconnected dyads of the network
+(i.e., non-edges). Thus, the cost of evaluating the likelihood becomes
+linear, rather than quadratic, in <span class="math inline">\(N\)</span>.</p>
+<p>Below is an example running <code>JANE()</code> with the case-control
+approach, sampling 20 controls (i.e., non-edges) per actor.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">JANE</span>(<span class="at">A =</span> network_adjacency_matrix,</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>     <span class="at">D =</span> <span class="dv">2</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>     <span class="at">K =</span> <span class="dv">3</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>     <span class="at">initialization =</span> <span class="st">&quot;GNN&quot;</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>     <span class="at">model =</span> <span class="st">&quot;RSR&quot;</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>     <span class="at">case_control =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">list</span>(<span class="at">n_control =</span> <span class="dv">20</span>))</span></code></pre></div>
+</div>
+<div id="using-s3-methods-with-jane-objects" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> Using S3 methods with
+<strong>JANE</strong> objects</h1>
+<p>Once you have fit a model using the <code>JANE()</code> function, you
+can inspect and analyze the results using several built-in S3 methods.
+These methods work with the <code>JANE</code> S3 class object returned
+from a model fit.</p>
+<p>For the examples in this section, we assume that <code>res</code> is
+the object returned by <code>JANE()</code>.</p>
+<div id="print" class="section level2" number="12.1">
+<h2><span class="header-section-number">12.1</span>
+<code>print()</code></h2>
+<p>The <code>print()</code> method gives a summary of the optimal model
+fit and available components.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">print</span>(res)</span></code></pre></div>
+<p>This displays:</p>
+<ul>
+<li>The model type, number of clusters, and latent space dimension</li>
+<li>Sizes of each cluster, that are estimated using a hard cluster
+assignment rule defined as <span class="math inline">\(\{h |
+\hat{Z}^{U}_{ih} = max_k \hat{Z}^{U}_{ik}\}\)</span>, where <span class="math inline">\(\hat{Z}^{U}_{ik}\)</span> is the estimated
+conditional probability that the <span class="math inline">\(i^{th}\)</span> actor belongs to the <span class="math inline">\(k^{th}\)</span> cluster. Note, here the optimal
+number of clusters selected may include empty clusters based on the hard
+cluster assignments</li>
+<li>Available components in the fitted object <code>res</code></li>
+</ul>
+</div>
+<div id="summary" class="section level2" number="12.2">
+<h2><span class="header-section-number">12.2</span>
+<code>summary()</code></h2>
+<p>Use the <code>summary()</code> method to extract and display detailed
+information about the estimated model.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code></pre></div>
+<p>You can also compare estimated cluster assignments to known true
+assigments using the <code>true_labels</code> argument, or inspect
+starting values using <code>initial_values = TRUE</code>.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">summary</span>(res, <span class="at">true_labels =</span> true_labels_vec)</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="fu">summary</span>(res, <span class="at">initial_values =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Output includes:</p>
+<ul>
+<li>Coefficients from logistic or GLM components</li>
+<li>Latent positions, cluster means, and precision matrices</li>
+<li>Soft cluster memberships and hard cluster assignments</li>
+<li>Clustering uncertainty</li>
+<li>ARI, NMI, classification error rate (if <code>true_labels</code> is
+supplied)</li>
+<li>Model selection criteria</li>
+<li>Summary of noise edges if <code>noise_weights = TRUE</code>. This
+includes the estimated conditional probability that a specific edge is a
+noise or a non-noise edge, and their corresponding noise edge cluster
+assignment based on a hard clustering rule of <span class="math inline">\(\{h | \hat{Z}^{W}_{eh} = max(\hat{Z}^{W}_{e1},
+\hat{Z}^{W}_{e2})\}\)</span> for <span class="math inline">\(e =
+1\dots,|E|\)</span>, where <span class="math inline">\(\hat{Z}^{W}_{e1}\)</span> and <span class="math inline">\(\hat{Z}^{W}_{e2}\)</span> are the estimated
+conditional probabilities that the <span class="math inline">\(e^{th}\)</span> edge is a non-noise and noise
+edge, respectively, and <span class="math inline">\(|E|\)</span>
+represents the total number of edges in the network (for undirected
+networks, only the upper diagonal edges are retained). Noise edge
+cluster labels are defined as: 1 = non-noise edge and 2 = noise
+edge</li>
+</ul>
+</div>
+<div id="plot" class="section level2" number="12.3">
+<h2><span class="header-section-number">12.3</span>
+<code>plot()</code></h2>
+<p>The <code>plot()</code> method provides visualizations depending on
+the <code>type</code> argument.</p>
+<div id="latent-space-clustering-default-type-lsnc" class="section level3" number="12.3.1">
+<h3><span class="header-section-number">12.3.1</span> Latent space
+clustering (default <code>type = &quot;lsnc&quot;</code>)</h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">plot</span>(res)</span></code></pre></div>
+<ul>
+<li>Plots latent positions colored by cluster</li>
+<li>Contours show the fitted Gaussian components when <span class="math inline">\(D\)</span> = 2. When <span class="math inline">\(D\)</span> &gt; 2, pairwise plots of the
+dimensions are displayed instead</li>
+</ul>
+</div>
+<div id="misclassified-actors-type-misclassified" class="section level3" number="12.3.2">
+<h3><span class="header-section-number">12.3.2</span> Misclassified
+actors (<code>type = &quot;misclassified&quot;</code>)</h3>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">plot</span>(res, <span class="at">type =</span> <span class="st">&quot;misclassified&quot;</span>, <span class="at">true_labels =</span> true_labels_vec)</span></code></pre></div>
+<ul>
+<li>Highlights misclassified actors in black based on supplied true
+cluster assignments (i.e., <code>true_labels_vec</code> in this
+example)</li>
+</ul>
+</div>
+<div id="clustering-uncertainty-type-uncertainty" class="section level3" number="12.3.3">
+<h3><span class="header-section-number">12.3.3</span> Clustering
+uncertainty (<code>type = &quot;uncertainty&quot;</code>)</h3>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">plot</span>(res, <span class="at">type =</span> <span class="st">&quot;uncertainty&quot;</span>)</span></code></pre></div>
+<ul>
+<li>Colors nodes by uncertainty (i.e., 1 - <span class="math inline">\(max_k\hat{Z}^{U}_{ik}\)</span>)</li>
+</ul>
+</div>
+<div id="em-trace-plot-type-trace_plot" class="section level3" number="12.3.4">
+<h3><span class="header-section-number">12.3.4</span> EM trace plot
+(<code>type = &quot;trace_plot&quot;</code>)</h3>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">plot</span>(res, <span class="at">type =</span> <span class="st">&quot;trace_plot&quot;</span>)</span></code></pre></div>
+<ul>
+<li>Shows convergence metrics over EM iterations</li>
+</ul>
+</div>
+<div id="additional-options" class="section level3" number="12.3.5">
+<h3><span class="header-section-number">12.3.5</span> Additional
+options</h3>
+<ul>
+<li><code>alpha_edge</code>, <code>alpha_node</code>, <code>zoom</code>,
+<code>swap_axes</code>, <code>rotation_angle</code>,
+<code>cluster_cols</code>, etc.</li>
+<li><code>remove_noise_edges = TRUE</code> removes noise edges based on
+noise edge hard cluster assignment (only applicable if
+<code>JANE()</code> was run with <code>noise_weights = TRUE</code>)</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-JANE" class="csl-entry">
+Arakkal, Alan T, and Daniel K Sewell. 2025. <span>“JANE: Just Another
+Latent Space NEtwork Clustering Algorithm.”</span> <em>Computational
+Statistics &amp; Data Analysis</em> 211: 108228.
+</div>
+<div id="ref-RJ-2021-048" class="csl-entry">
+Bengtsson, Henrik. 2021. <span>“A Unifying Framework for Parallel and
+Distributed Processing in r Using Futures.”</span> <em>The R
+Journal</em> 13 (2): 208–27. <a href="https://doi.org/10.32614/RJ-2021-048">https://doi.org/10.32614/RJ-2021-048</a>.
+</div>
+<div id="ref-ICL" class="csl-entry">
+Biernacki, Christophe, Gilles Celeux, and Gérard Govaert. 2000.
+<span>“Assessing a Mixture Model for Clustering with the Integrated
+Completed Likelihood.”</span> <em>IEEE Transactions on Pattern Analysis
+and Machine Intelligence</em> 22 (7): 719–25.
+</div>
+<div id="ref-handcock2007model" class="csl-entry">
+Handcock, Mark S, Adrian E Raftery, and Jeremy M Tantrum. 2007.
+<span>“Model-Based Clustering for Social Networks.”</span> <em>Journal
+of the Royal Statistical Society Series A: Statistics in Society</em>
+170 (2): 301–54.
+</div>
+<div id="ref-Raftery2012" class="csl-entry">
+Raftery, Adrian E, Xiaoyue Niu, Peter D Hoff, and Ka Yee Yeung. 2012.
+<span>“Fast Inference for the Latent Space Network Model Using a
+Case-Control Approximate Likelihood.”</span> <em>Journal of
+Computational and Graphical Statistics</em> 21 (4): 901–19.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

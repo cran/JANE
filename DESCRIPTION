@@ -1,6 +1,6 @@
 Package: JANE
 Title: Just Another Latent Space Network Clustering Algorithm
-Version: 1.1.0
+Version: 2.0.0
 Authors@R: 
     c(person("Alan", "Arakkal", , "alan-arakkal@uiowa.edu", 
              role = c("aut", "cre", "cph"),
@@ -8,7 +8,7 @@ Authors@R:
       person("Daniel", "Sewell", , "daniel-sewell@uiowa.edu", 
              role = "aut",
              comment = c(ORCID = "0000-0002-9238-4026") ))
-Description: Fit latent space network cluster models using an expectation-maximization algorithm. Enables flexible modeling of unweighted or weighted network data (with or without noise edges), supporting both directed and undirected networks (with or without degree heterogeneity). Designed to handle large networks efficiently, it allows users to explore network structure through latent space representations, identify clusters (i.e., community detection) within network data, and simulate networks with varying clustering, connectivity patterns, and noise edges. Methodology for the implementation is described in Arakkal and Sewell (2025) <doi:10.1016/j.csda.2025.108228>. 
+Description: Fit latent space network cluster models using an expectation-maximization algorithm. Enables flexible modeling of unweighted or weighted network data (with or without noise edges), supporting both directed and undirected networks (with or without degree and strength heterogeneity). Designed to handle large networks efficiently, it allows users to explore network structure through latent space representations, identify clusters (i.e., community detection) within network data, and simulate networks with varying clustering, connectivity patterns, and noise edges. Methodology for the implementation is described in Arakkal and Sewell (2025) <doi:10.1016/j.csda.2025.108228>. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
@@ -19,13 +19,14 @@ Imports: Rcpp (>= 1.0.10), Matrix, extraDistr, mclust, scales, aricode,
 RoxygenNote: 7.3.2
 URL: https://github.com/a1arakkal/JANE
 BugReports: https://github.com/a1arakkal/JANE/issues
-Suggests: testthat (>= 3.0.0)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2025-06-06 20:35:13 UTC; alanarakkal
+Packaged: 2025-07-30 22:25:46 UTC; alanarakkal
 Author: Alan Arakkal [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0002-7001-493X>),
   Daniel Sewell [aut] (ORCID: <https://orcid.org/0000-0002-9238-4026>)
 Maintainer: Alan Arakkal <alan-arakkal@uiowa.edu>
 Repository: CRAN
-Date/Publication: 2025-06-06 23:50:02 UTC
+Date/Publication: 2025-07-30 22:50:02 UTC

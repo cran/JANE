@@ -6,9 +6,9 @@
 #' @param p A numeric vector of length \eqn{K} specifying the mixture weights of the finite multivariate normal mixture distribution for the latent positions.
 #' @param model A character string specifying the type of model used to simulate the network:
 #'  \itemize{
-#'   \item{'NDH': generates an \strong{undirected} network with no degree heterogeneity}
-#'   \item{'RS': generates an \strong{undirected} network with degree heterogeneity, specifically by including actor specific random sociality effects}
-#'   \item{'RSR': generates a \strong{directed} network with degree heterogeneity, specifically by including actor specific random sender and receiver effects}
+#'   \item{'NDH': generates an \strong{undirected} network with no degree heterogeneity (or connection strength heterogeneity if working with weighted network)}
+#'   \item{'RS': generates an \strong{undirected} network with degree heterogeneity (and connection strength heterogeneity if working with weighted network), specifically by including actor specific random sociality effects}
+#'   \item{'RSR': generates a \strong{directed} network with degree heterogeneity (and connection strength heterogeneity if working with weighted network), specifically by including actor specific random sender and receiver effects}
 #'   }
 #' @param family A character string specifying the distribution of the edge weights.
 #'  \itemize{
@@ -30,7 +30,7 @@
 #' @param params_weights Only relevant when \code{family \%in\% c('lognormal', 'poisson')}. A list containing the parameters of the GLMs for the edge weights, including:
 #'  \itemize{
 #'   \item{'beta0': a numeric value specifying the intercept parameter for the zero-truncated Poisson or log-normal GLM}
-#'   \item{'precision_R_effects': precision parameters for random degree heterogeneity effects, specific to the zero-truncated Poisson or log-normal GLM:
+#'   \item{'precision_R_effects': precision parameters for random connection strength heterogeneity effects, specific to the zero-truncated Poisson or log-normal GLM:
 #'     \itemize{
 #'       \item{'NDH': does not apply, can leave as missing}
 #'       \item{'RS': a numeric value specifying the precision parameter of the normal distribution of the random sociality effect, if missing will generate from a gamma(shape = 1, rate = 1)}
@@ -85,7 +85,7 @@
 #'             params_LR = list(beta0 = beta0),
 #'             remove_isolates = TRUE)
 #'
-#' # Simulate a directed, weighted network, with no noise and degree heterogeneity
+#' # Simulate a directed, weighted network, with degree and strength heterogeneity but no noise
 #' JANE::sim_A(N = 100L, 
 #'             model = "RSR",
 #'             family = "lognormal",
@@ -97,7 +97,7 @@
 #'                                   precision_weights = 1),
 #'             remove_isolates = TRUE)
 #'
-#' # Simulate an undirected, weighted network, with noise and degree heterogeneity
+#' # Simulate an undirected, weighted network, with noise and degree and strength heterogeneity
 #' JANE::sim_A(N = 100L, 
 #'             model = "RS",
 #'             family = "poisson",
@@ -142,7 +142,7 @@ sim_A <- function(N,
   }
   
   if( ( is.null(params_weights) & (family != "bernoulli"))  || ( (family != "bernoulli") && is.null(params_weights$beta0) ) ){
-    stop("Please supply a named list for params_weights. At minimum, for family = 'poisson' a params_weights$beta0 needs to be specified and for family = 'lognromal' params_weights$beta0 and params_weights$precision_weights needs to be suppied")
+    stop("Please supply a named list for params_weights. At minimum, for family = 'poisson' params_weights$beta0 needs to be specified and for family = 'lognromal' params_weights$beta0 and params_weights$precision_weights needs to be supplied")
   }
   
   if(missing(mean_noise_weights) & (family != "bernoulli") & (noise_weights_prob > 0.0)){
