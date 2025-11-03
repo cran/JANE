@@ -616,7 +616,7 @@ f <- diag(c(0.1, rep(0.5, n_interior_knots + 1)))
 my_prior_hyperparameters <- specify_priors(model = "RS",
                                            n_interior_knots = n_interior_knots,
                                            a = quote(rep(1, D)),
-                                           b = b,
+                                           b = 3,
                                            c = quote(D + 1),
                                            G = quote(10*diag(D)),
                                            nu = quote(rep(2, K)),
@@ -698,7 +698,7 @@ Use the `summary()` method to extract and display detailed information about the
 summary(res)
 ```
 
-You can also compare estimated cluster assignments to known true assigments using the `true_labels` argument, or inspect starting values using `initial_values = TRUE`.
+You can also compare estimated cluster assignments to known true assignments using the `true_labels` argument, or inspect starting values using `initial_values = TRUE`.
 
 ```{r, eval = FALSE}
 summary(res, true_labels = true_labels_vec)

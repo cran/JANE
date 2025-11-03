@@ -1,50 +1,8 @@
 
 #include <RcppArmadillo.h>
+#include "helper_funs.h"
 
 // [[Rcpp::depends(RcppArmadillo)]]
-
-// [[Rcpp::export]]
-double trunc_poisson_density_BIC(double w, double mean, double log){
-  
-  double temp = -1.0*arma::datum::inf;
-
-  if (w > 0.0){
-
-    temp = w*std::log(mean) - mean - std::lgamma(w + 1.0) - std::log(1.0 - std::exp(-1.0*mean));
-
-    if(log <= 0.0){
-
-      temp = std::exp(temp);
-
-    } 
-    
-  }
-
-  return temp;
-
-}
-
-// [[Rcpp::export]]
-double lognormal_density_BIC(double w, double precision, double mean, double log){
-
-  double temp = -1.0*arma::datum::inf;
-
-  if (w > 0.0){
-
-    temp = 0.5*std::log(precision) - std::log(w) - 0.5*std::log(2.0*arma::datum::pi) - 0.5*precision*std::pow(std::log(w) - mean, 2);
-
-    if(log <= 0.0){
-
-      temp = std::exp(temp);
-
-    } 
-    
-  }
-
-  return temp;
-
-}
-
 
 // [[Rcpp::export]]
 double BIC_logit_NDH(arma::sp_mat A, Rcpp::List object){
@@ -65,7 +23,7 @@ double BIC_logit_NDH(arma::sp_mat A, Rcpp::List object){
           arma::rowvec cross_prod = temp * temp.t();
           double eta = beta(0) - cross_prod(0);
           double max_val = std::max(0.0, eta);
-          p_1 = p_1 + ( A(i,j)*eta - max_val - std::log( std::exp(-max_val) + std::exp(eta - max_val) ) );
+          p_1 = p_1 + ( A(i,j)*eta - max_val - std::log( std::exp(-1.0*max_val) + std::exp(eta - max_val) ) );
           
        }
        
@@ -100,7 +58,7 @@ double BIC_logit_RS(arma::sp_mat A, Rcpp::List object){
          arma::rowvec cross_prod = temp * temp.t();
          double eta = x_ij_beta(0) - cross_prod(0);
          double max_val = std::max(0.0, eta);
-         p_1 = p_1 + ( A(i,j)*eta - max_val - std::log( std::exp(-max_val) + std::exp(eta - max_val) ) );
+         p_1 = p_1 + ( A(i,j)*eta - max_val - std::log( std::exp(-1.0*max_val) + std::exp(eta - max_val) ) );
        
        }
        
@@ -135,7 +93,7 @@ double BIC_logit_RSR(arma::sp_mat A, Rcpp::List object){
          arma::rowvec cross_prod = temp * temp.t();
          double eta = x_ij_beta(0) - cross_prod(0);
          double max_val = std::max(0.0, eta);
-         p_1 = p_1 + ( A(i,j)*eta - max_val - std::log( std::exp(-max_val) + std::exp(eta - max_val) ) );
+         p_1 = p_1 + ( A(i,j)*eta - max_val - std::log( std::exp(-1.0*max_val) + std::exp(eta - max_val) ) );
        
        }
        
@@ -231,7 +189,8 @@ double BIC_hurdle(arma::sp_mat W, Rcpp::List object){
            arma::rowvec cross_prod = temp * temp.t();
            double eta = beta(0) - cross_prod(0);
            double w = W(i,j);
-           p_1 = p_1 + ( -1.0*std::log(1.0 + std::exp(eta)) );
+           double max_val = std::max(0.0, eta);
+           p_1 = p_1 + ( -max_val - std::log(std::exp(-1.0*max_val) + std::exp(eta - max_val)) );
           
            if (w > 0.0){
               
@@ -249,13 +208,13 @@ double BIC_hurdle(arma::sp_mat W, Rcpp::List object){
 
                   double precision_weights = object["precision_weights"];
                   double precision_noise_weights = object["precision_noise_weights"];
-                  log_density = lognormal_density_BIC(w, precision_weights, eta_w, 1.0);
-                  log_density_noise = lognormal_density_BIC(w, precision_noise_weights, guess_noise_weights, 1.0);
+                  log_density = lognormal_density(w, precision_weights, eta_w, 1.0);
+                  log_density_noise = lognormal_density(w, precision_noise_weights, guess_noise_weights, 1.0);
 
                 } else {
 
-                  log_density = trunc_poisson_density_BIC(w, std::exp(eta_w), 1.0);
-                  log_density_noise = trunc_poisson_density_BIC(w, guess_noise_weights, 1.0);
+                  log_density = trunc_poisson_density(w, std::exp(eta_w), 1.0);
+                  log_density_noise = trunc_poisson_density(w, guess_noise_weights, 1.0);
 
                 }
 
@@ -287,7 +246,8 @@ double BIC_hurdle(arma::sp_mat W, Rcpp::List object){
           arma::rowvec cross_prod = temp * temp.t();
           double eta = x_ij_beta(0) - cross_prod(0);
           double w = W(i,j);
-          p_1 = p_1 + ( -1.0*std::log(1.0 + std::exp(eta)) );
+          double max_val = std::max(0.0, eta);
+          p_1 = p_1 + ( -max_val - std::log(std::exp(-1.0*max_val) + std::exp(eta - max_val)) );
           
            if (w > 0.0){
               
@@ -309,13 +269,13 @@ double BIC_hurdle(arma::sp_mat W, Rcpp::List object){
 
                   double precision_weights = object["precision_weights"];
                   double precision_noise_weights = object["precision_noise_weights"];
-                  log_density = lognormal_density_BIC(w, precision_weights, eta_w, 1.0);
-                  log_density_noise = lognormal_density_BIC(w, precision_noise_weights, guess_noise_weights, 1.0);
+                  log_density = lognormal_density(w, precision_weights, eta_w, 1.0);
+                  log_density_noise = lognormal_density(w, precision_noise_weights, guess_noise_weights, 1.0);
 
                 } else {
 
-                  log_density = trunc_poisson_density_BIC(w, std::exp(eta_w), 1.0);
-                  log_density_noise = trunc_poisson_density_BIC(w, guess_noise_weights, 1.0);
+                  log_density = trunc_poisson_density(w, std::exp(eta_w), 1.0);
+                  log_density_noise = trunc_poisson_density(w, guess_noise_weights, 1.0);
 
                 }
 
@@ -346,7 +306,8 @@ double BIC_hurdle(arma::sp_mat W, Rcpp::List object){
           arma::rowvec cross_prod = temp * temp.t();
           double eta = x_ij_beta(0) - cross_prod(0);
           double w = W(i,j);
-          p_1 = p_1 + ( -1.0*std::log(1.0 + std::exp(eta)) );
+          double max_val = std::max(0.0, eta);
+          p_1 = p_1 + ( -max_val - std::log(std::exp(-1.0*max_val) + std::exp(eta - max_val)) );
           
            if (w > 0.0){
               
@@ -368,13 +329,13 @@ double BIC_hurdle(arma::sp_mat W, Rcpp::List object){
 
                   double precision_weights = object["precision_weights"];
                   double precision_noise_weights = object["precision_noise_weights"];
-                  log_density = lognormal_density_BIC(w, precision_weights, eta_w, 1.0);
-                  log_density_noise = lognormal_density_BIC(w, precision_noise_weights, guess_noise_weights, 1.0);
+                  log_density = lognormal_density(w, precision_weights, eta_w, 1.0);
+                  log_density_noise = lognormal_density(w, precision_noise_weights, guess_noise_weights, 1.0);
 
                 } else {
 
-                  log_density = trunc_poisson_density_BIC(w, std::exp(eta_w), 1.0);
-                  log_density_noise = trunc_poisson_density_BIC(w, guess_noise_weights, 1.0);
+                  log_density = trunc_poisson_density(w, std::exp(eta_w), 1.0);
+                  log_density_noise = trunc_poisson_density(w, guess_noise_weights, 1.0);
 
                 }
 

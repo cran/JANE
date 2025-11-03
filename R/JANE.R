@@ -1,6 +1,6 @@
 #' Fit JANE
 #' @description Fit a latent space cluster model, with or without noise edges, using an EM algorithm.
-#' @param A A square matrix or sparse matrix of class 'dgCMatrix' representing the adjacency matrix of the network of interest.
+#' @param A A square matrix or sparse matrix of class 'Matrix' (from the Matrix package) representing the adjacency matrix of the network of interest.
 #' @param D Integer (scalar or vector) specifying the dimension of the latent space (default is 2).
 #' @param K Integer (scalar or vector) specifying the number of clusters to consider (default is 2).
 #' @param family A character string specifying the distribution of the edge weights.
@@ -258,8 +258,8 @@ JANE <- function(A,
   )
   
   # Stop if A not supplied
-  if(missing(A) || !(inherits(A, "matrix") | inherits(A, "dgCMatrix"))){
-    stop("Argument 'A' missing or is not a matrix, please supply an adjacency matrix")
+  if(missing(A) || !(inherits(A, "matrix") | inherits(A, "Matrix"))){
+    stop("Argument 'A' missing or is not a matrix of the correct class, please supply a dense adjacency matrix or sparse adjacency matrix of class 'Matrix' (Matrix package)")
   }
   
   # Stop if A is not square
@@ -281,8 +281,12 @@ JANE <- function(A,
   cl$noise_weights <- eval(noise_weights)
   
   # Check for class of A
-  if(!"dgCMatrix" %in% class(A)){
-    A <- methods::as(A, "dgCMatrix")
+  if(inherits(A, "matrix")){
+    A <- Matrix::Matrix(A, sparse = TRUE)
+  }
+  
+  if(!inherits(A, "dgCMatrix")){
+    A <- methods::as(A, "generalMatrix")
   }
   
   # Check for self loops 
@@ -834,6 +838,7 @@ JANE <- function(A,
     names(optimal_starting[["cluster_labels"]]) <- ids
     rownames(optimal_starting$prob_matrix) <- ids
     rownames(optimal_starting$U) <- ids
+    optimal_starting <- structure(optimal_starting[sort(names(optimal_starting))], class = "JANE.initial_values")
   } else {
     optimal_starting <- NULL
   }
@@ -863,7 +868,7 @@ JANE <- function(A,
   }))
 
   return(structure(list(optimal_res = optimal_res[sort(names(optimal_res))],
-                        optimal_starting = structure(optimal_starting[sort(names(optimal_starting))], class = "JANE.initial_values"),
+                        optimal_starting = optimal_starting,
                         input_params =  list(IC_selection = con$IC_selection,
                                              case_control = case_control,
                                              DA_type = DA_type,
@@ -1333,92 +1338,3 @@ count_nested_lists <- function(x) {
   1 + sum(sapply(x, count_nested_lists, USE.NAMES = FALSE))
 }
 
-#' @useDynLib JANE  
-update_U <- function(U, A, mus, omegas, prob_matrix, beta, X, n_control, model) {
-  invisible(.Call('_JANE_update_U', PACKAGE = 'JANE', U, A, mus, omegas, prob_matrix, beta, X, n_control, model))
-}
-
-#' @useDynLib JANE  
-update_U_CC <- function(U, n_control, A, mus, omegas, prob_matrix, beta, X, model) {
-  invisible(.Call('_JANE_update_U_CC', PACKAGE = 'JANE', U, n_control, A, mus, omegas, prob_matrix, beta, X, model))
-}
-
-#' @useDynLib JANE  
-update_U_RE <- function(U, A, mus, omegas, prob_matrix, beta, X, model, n_control) {
-  invisible(.Call('_JANE_update_U_RE', PACKAGE = 'JANE', U, A, mus, omegas, prob_matrix, beta, X, model, n_control))
-}
-
-#' @useDynLib JANE  
-update_U_RE_CC <- function(U, n_control, A, mus, omegas, prob_matrix, beta, X, model) {
-  invisible(.Call('_JANE_update_U_RE_CC', PACKAGE = 'JANE', U, n_control, A, mus, omegas, prob_matrix, beta, X, model))
-}
-
-#' @useDynLib JANE  
-update_beta <- function(beta, A, U, f, e, X, n_control, model) {
-  invisible(.Call('_JANE_update_beta', PACKAGE = 'JANE', beta, A, U, f, e, X, n_control, model))
-}
-
-#' @useDynLib JANE  
-update_beta_CC <- function(beta, A, n_control, U, f, e, X, model) {
-  invisible(.Call('_JANE_update_beta_CC', PACKAGE = 'JANE', beta, A, n_control, U, f, e, X, model))
-}
-
-#' @useDynLib JANE  
-update_beta_RE <- function(beta, A, U, f, e, X, model, n_control) {
-  invisible(.Call('_JANE_update_beta_RE', PACKAGE = 'JANE', beta, A, U, f, e, X, model, n_control))
-}
-
-#' @useDynLib JANE  
-update_beta_RE_CC <- function(beta, A, n_control, U, f, e, X, model) {
-  invisible(.Call('_JANE_update_beta_RE_CC', PACKAGE = 'JANE', beta, A, n_control, U, f, e, X, model))
-}
-
-#' @useDynLib JANE  
-update_beta2 <- function(beta2, prob_matrix_W, f_2, e_2, X2, model, family) {
-  invisible(.Call('_JANE_update_beta2', PACKAGE = 'JANE', beta2, prob_matrix_W, f_2, e_2, X2, model, family))
-}
-
-#' @useDynLib JANE  
-update_mus_omegas <- function(prob_matrix, U, b, a, c, G, mus, omegas) {
-  invisible(.Call('_JANE_update_mus_omegas', PACKAGE = 'JANE', prob_matrix, U, b, a, c, G, mus, omegas))
-}
-
-#' @useDynLib JANE  
-update_p <- function(prob_matrix, p, nu) {
-  invisible(.Call('_JANE_update_p', PACKAGE = 'JANE', prob_matrix, p, nu))
-}
-
-#' @useDynLib JANE  
-update_prob_matrix_DA <- function(prob_matrix, mus, omegas, p, U, temp_beta) {
-  invisible(.Call('_JANE_update_prob_matrix_DA', PACKAGE = 'JANE', prob_matrix, mus, omegas, p, U, temp_beta))
-}
-
-#' @useDynLib JANE  
-update_prob_matrix_W_DA <- function(prob_matrix_W, model, family, beta, beta2, precision_weights, precision_noise_weights, guess_noise_weights, U, X, X2, q, temp_beta) {
-  invisible(.Call('_JANE_update_prob_matrix_W_DA', PACKAGE = 'JANE', prob_matrix_W, model, family, beta, beta2, precision_weights, precision_noise_weights, guess_noise_weights, U, X, X2, q, temp_beta))
-}
-
-#' @useDynLib JANE  
-update_q_prob <- function(q_prob, prob_matrix_W, model, N, h, l) {
-  invisible(.Call('_JANE_update_q_prob', PACKAGE = 'JANE', q_prob, prob_matrix_W, model, N, h, l))
-}
-
-#' @useDynLib JANE  
-trunc_poisson_density <- function(w, mean, log) {
-  .Call('_JANE_trunc_poisson_density', PACKAGE = 'JANE', w, mean, log)
-}
-
-#' @useDynLib JANE  
-lognormal_density <- function(w, precision, mean, log) {
-  .Call('_JANE_lognormal_density', PACKAGE = 'JANE', w, precision, mean, log)
-}
-
-#' @useDynLib JANE  
-update_precision_weights <- function(precision_weights, prob_matrix_W, model, beta2, X2, m_1, o_1, f_2, e_2) {
-  invisible(.Call('_JANE_update_precision_weights', PACKAGE = 'JANE', precision_weights, prob_matrix_W, model, beta2, X2, m_1, o_1, f_2, e_2))
-}
-
-#' @useDynLib JANE  
-update_precision_noise_weights <- function(precision_noise_weights, prob_matrix_W, guess_noise_weights, m_2, o_2) {
-  invisible(.Call('_JANE_update_precision_noise_weights', PACKAGE = 'JANE', precision_noise_weights, prob_matrix_W, guess_noise_weights, m_2, o_2))
-}

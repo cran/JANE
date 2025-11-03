@@ -360,7 +360,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <h1 class="title toc-ignore">JANE User Guide</h1>
-<h3 class="subtitle">JANE Package Version 2.0.0</h3>
+<h3 class="subtitle">JANE Package Version 2.1.0</h3>
 
 
 <div id="TOC">
@@ -1125,7 +1125,7 @@ running <code>JANE()</code> for multiple combinations of <span class="math inlin
 <span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>my_prior_hyperparameters <span class="ot">&lt;-</span> <span class="fu">specify_priors</span>(<span class="at">model =</span> <span class="st">&quot;RS&quot;</span>,</span>
 <span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>                                           <span class="at">n_interior_knots =</span> n_interior_knots,</span>
 <span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>                                           <span class="at">a =</span> <span class="fu">quote</span>(<span class="fu">rep</span>(<span class="dv">1</span>, D)),</span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>                                           <span class="at">b =</span> b,</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>                                           <span class="at">b =</span> <span class="dv">3</span>,</span>
 <span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>                                           <span class="at">c =</span> <span class="fu">quote</span>(D <span class="sc">+</span> <span class="dv">1</span>),</span>
 <span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>                                           <span class="at">G =</span> <span class="fu">quote</span>(<span class="dv">10</span><span class="sc">*</span><span class="fu">diag</span>(D)),</span>
 <span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>                                           <span class="at">nu =</span> <span class="fu">quote</span>(<span class="fu">rep</span>(<span class="dv">2</span>, K)),</span>
@@ -1224,7 +1224,7 @@ cluster assignments</li>
 information about the estimated model.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code></pre></div>
 <p>You can also compare estimated cluster assignments to known true
-assigments using the <code>true_labels</code> argument, or inspect
+assignments using the <code>true_labels</code> argument, or inspect
 starting values using <code>initial_values = TRUE</code>.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">summary</span>(res, <span class="at">true_labels =</span> true_labels_vec)</span>
 <span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="fu">summary</span>(res, <span class="at">initial_values =</span> <span class="cn">TRUE</span>)</span></code></pre></div>

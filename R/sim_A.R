@@ -169,6 +169,26 @@ sim_A <- function(N,
     stop("Please supply a numeric >0 for precision_noise_weights")
   }
   
+  if (dim(omegas)[3] != nrow(mus)) {
+    stop("The number of rows in 'mus' must match the number of D x D matrices in 'omegas'")
+  }
+  
+  if (any(dim(omegas)[1:2] != ncol(mus))) {
+    stop("The number of columns in 'mus' (i.e., D, the latent space dimension) must match the dimensions of the D x D matrices in 'omegas'")
+  }
+  
+  if (abs(sum(p) - 1.0) > 1e-8) {
+    stop(
+      "The 'p' vector of mixture weights does not sum to 1.0"
+    )
+  }
+  
+  if (length(p) != nrow(mus)) {
+    stop(
+      "The length of 'p' does not match the number of rows in 'mus' and the number of D x D matrices in 'omegas'"
+    )
+  }
+  
   # draw Z
   Z <-  t(stats::rmultinom(n = N, size = 1, prob = p))
   
@@ -423,22 +443,3 @@ sim_A <- function(N,
   
 }
 
-#' @useDynLib JANE   
-draw_A_NDH_c <- function(U, beta0) {
-  .Call('_JANE_draw_A_NDH_c', PACKAGE = 'JANE', U, beta0)
-}
-
-#' @useDynLib JANE   
-draw_A_RS_c <- function(U, beta0, s) {
-  .Call('_JANE_draw_A_RS_c', PACKAGE = 'JANE', U, beta0, s)
-}
-
-#' @useDynLib JANE   
-draw_A_RSR_c <- function(U, beta0, s, r) {
-  .Call('_JANE_draw_A_RSR_c', PACKAGE = 'JANE', U, beta0, s, r)
-}
-
-#' @useDynLib JANE   
-compute_mean_edge_weight <- function(edge_indices, beta0, RE, model) {
-  invisible(.Call('_JANE_compute_mean_edge_weight', PACKAGE = 'JANE', edge_indices, beta0, RE, model))
-}

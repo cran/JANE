@@ -1,5 +1,6 @@
 
 #include <RcppArmadillo.h>
+#include "helper_funs.h"
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
@@ -30,14 +31,14 @@ void update_U(arma::mat& U, arma::sp_mat A, arma::mat mus, arma::cube omegas, ar
    
      if (j != i){
      
-       p1_2 = p1_2 +  (2.0*A(i,j))*arma::eye<arma::mat>(D, D);
+       p1_2 = p1_2 + (2.0*A(i,j))*arma::eye<arma::mat>(D, D);
        
        p2_2 = p2_2 + (2.0*A(i,j))*U.row(j).t();
        
        arma::rowvec diff = U.row(i) - U.row(j);
        arma::rowvec cross_prod = diff * diff.t();
-       double exp_eta = std::exp(beta(0) - cross_prod(0));
-       double p = 1.0/(1.0 + (1.0/exp_eta));
+       double eta = beta(0) - cross_prod(0);
+       double p = logit_inv(eta);
        
        p2_3 = p2_3 + 2.0*p*diff.t();
     
@@ -45,8 +46,8 @@ void update_U(arma::mat& U, arma::sp_mat A, arma::mat mus, arma::cube omegas, ar
      
    }
 
-   arma::colvec new_ui = arma::inv_sympd(p1_1 + p1_2) * (p2_1 + p2_2 + p2_3);
-   
+   arma::colvec new_ui = solve_only_sympd((p1_1 + p1_2), (p2_1 + p2_2 + p2_3));
+
    U.row(i) = new_ui.t();
      
   }
@@ -103,8 +104,8 @@ void update_U_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mus, 
        
        arma::rowvec diff = U.row(i) - U.row(j);
        arma::rowvec cross_prod = diff * diff.t();
-       double exp_eta = std::exp(beta(0) - cross_prod(0));
-       double p = 1.0/(1.0 + (1.0/exp_eta));
+       double eta = beta(0) - cross_prod(0);
+       double p = logit_inv(eta);
        p2_3 = p2_3 + 2.0*p*diff.t();
   
    }
@@ -135,15 +136,14 @@ void update_U_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mus, 
        
        arma::rowvec diff = U.row(i) - U.row(j);
        arma::rowvec cross_prod = diff * diff.t();
-       double exp_eta = std::exp(beta(0) - cross_prod(0));
-       double p = 1.0/(1.0 + (1.0/exp_eta));
-       
+       double eta = beta(0) - cross_prod(0);
+       double p = logit_inv(eta);       
        p2_4 = p2_4 + ((N_A_0_i)/(n_A_0_i*1.0))*2.0*p*diff.t();
   
      
    }
 
-   arma::colvec new_ui = arma::inv_sympd(p1_1 + p1_2) * (p2_1 + p2_2 + p2_3 + p2_4);
+   arma::colvec new_ui = solve_only_sympd((p1_1 + p1_2), (p2_1 + p2_2 + p2_3 + p2_4));
    
    U.row(i) = new_ui.t();
      
@@ -195,8 +195,8 @@ void update_U_RE(arma::mat& U, arma::sp_mat A, arma::mat mus, arma::cube omegas,
   
          arma::rowvec x_ij_beta = x_ij*beta; 
        
-         double exp_eta = std::exp(x_ij_beta(0)- cross_prod(0));
-         double p = 1.0/(1.0 + (1.0/exp_eta));
+         double eta = x_ij_beta(0)- cross_prod(0);
+         double p = logit_inv(eta);
        
          p2_3 = p2_3 + 2.0*p*diff.t();
          
@@ -212,8 +212,8 @@ void update_U_RE(arma::mat& U, arma::sp_mat A, arma::mat mus, arma::cube omegas,
            x_ij = arma::ones<arma::rowvec>(1+X.n_cols);
            x_ij(arma::span(1, X.n_cols)) = arma::join_rows(X.row(j).subvec(0, (X.n_cols*0.5) - 1), X.row(i).subvec(X.n_cols*0.5, X.n_cols - 1));
            x_ij_beta = x_ij*beta; 
-           exp_eta = std::exp(x_ij_beta(0)- cross_prod(0));
-           p = 1.0/(1.0 + (1.0/exp_eta));
+           eta = x_ij_beta(0)- cross_prod(0);
+           p = logit_inv(eta);
            p2_3 = p2_3 + 2.0*p*diff.t();
 
        }
@@ -222,7 +222,7 @@ void update_U_RE(arma::mat& U, arma::sp_mat A, arma::mat mus, arma::cube omegas,
      
    }
 
-   arma::colvec new_ui = arma::inv_sympd(p1_1 + p1_2) * ( p2_1 + p2_2  + p2_3 );
+   arma::colvec new_ui = solve_only_sympd((p1_1 + p1_2), ( p2_1 + p2_2  + p2_3 ));
    
    U.row(i) = new_ui.t();
      
@@ -290,8 +290,8 @@ void update_U_RE_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mu
        arma::rowvec diff = U.row(i) - U.row(j);
        arma::rowvec cross_prod = diff * diff.t();
        
-       double exp_eta = std::exp(x_ij_beta(0)- cross_prod(0));
-       double p = 1.0/(1.0 + (1.0/exp_eta));
+       double eta = x_ij_beta(0)- cross_prod(0);
+       double p = logit_inv(eta);
        p2_3 = p2_3 + 2.0*p*diff.t();
   
     }
@@ -333,9 +333,8 @@ void update_U_RE_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mu
        arma::rowvec diff = U.row(i) - U.row(j);
        arma::rowvec cross_prod = diff * diff.t();
        
-       double exp_eta = std::exp(x_ij_beta(0)- cross_prod(0));
-       double p = 1.0/(1.0 + (1.0/exp_eta));
-       
+       double eta = x_ij_beta(0)- cross_prod(0);
+       double p = logit_inv(eta);
        p2_4 = p2_4 + ((N_A_0_i)/(n_A_0_i*1.0))*2.0*p*diff.t();
   
     }
@@ -378,8 +377,8 @@ void update_U_RE_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mu
         arma::rowvec diff = U.row(i) - U.row(j);
         arma::rowvec cross_prod = diff * diff.t();
        
-        double exp_eta = std::exp(x_ij_beta(0)- cross_prod(0));
-        double p = 1.0/(1.0 + (1.0/exp_eta));
+        double eta = x_ij_beta(0)- cross_prod(0);
+        double p = logit_inv(eta);
         p2_3 = p2_3 + 2.0*p*diff.t();
   
       }
@@ -414,8 +413,8 @@ void update_U_RE_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mu
         arma::rowvec diff = U.row(i) - U.row(j);
         arma::rowvec cross_prod = diff * diff.t();
        
-        double exp_eta = std::exp(x_ij_beta(0)- cross_prod(0));
-        double p = 1.0/(1.0 + (1.0/exp_eta));
+        double eta = x_ij_beta(0)- cross_prod(0);
+        double p = logit_inv(eta);
        
         p2_4 = p2_4 + ((N_A_0_i)/(n_A_0_i*1.0))*2.0*p*diff.t();
   
@@ -423,7 +422,7 @@ void update_U_RE_CC(arma::mat& U, double n_control, arma::sp_mat A, arma::mat mu
     
    }
 
-   arma::colvec new_ui = arma::inv_sympd(p1_1 + p1_2) * (p2_1 + p2_2 + p2_3 + p2_4);
+   arma::colvec new_ui = solve_only_sympd((p1_1 + p1_2), (p2_1 + p2_2 + p2_3 + p2_4));
    
    U.row(i) = new_ui.t();
      
